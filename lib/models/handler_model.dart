@@ -31,7 +31,9 @@ class HandlerModel {
   //         }
   final Map<String, dynamic> properties;
 
-  String description;
+  ///указатель, какие парметры в properties обязательные. Пока модель не получит ответ на обязательные параметры, она не перейдет на следующий нод
+  final List<String> required;
+
   List<AddonPropertiesModel> addonProperties = [];
 
   ///Список ююидов нодов на которые эта схема может переключить по результатам работы хэндлера
@@ -41,7 +43,7 @@ class HandlerModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   final GlobalKey key = GlobalKey();
 
-  HandlerModel({required this.flowResultName, required this.properties, required this.description});
+  HandlerModel({required this.required, required this.flowResultName, required this.properties});
 
   factory HandlerModel.fromJson(Map<String, dynamic> json) => _$HandlerModelFromJson(json);
   Map<String, dynamic> toJson() => _$HandlerModelToJson(this);
@@ -50,7 +52,6 @@ class HandlerModel {
     return {
       'flowResultName': flowResultName,
       'properties': properties,
-      'description': description,
       'addonProperties': addonProperties.map((add) => add).toList(),
       'outNode': nextNodeUuid,
     };
@@ -92,7 +93,6 @@ ${returnClassBody()}
 ${returnAddonPropertiesToClass()}
     
     async def $name(args: FlowArgs, flow_manager: FlowManager) -> tuple[${flowResultName.toCapitalized()}, NodeConfig]:
-      """$description"""
       #вот тут что-то отправляем в АПИ и получаем структурированый ответ
       #определяем следующий узел
       result, next_node = router(args, "$name")

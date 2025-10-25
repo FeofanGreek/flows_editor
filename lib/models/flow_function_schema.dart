@@ -18,20 +18,13 @@ class FunctionSchema {
   ///Описание должно быть максимально точным, ясным и кратким, чтобы LLM могла правильно оценить намерение пользователя и понять, когда именно следует вызвать этот инструмент, а когда — нет
   String description;
 
-  ///описание параметров из которых будет идти выбор и формирование результата
-  Map<String, dynamic> get properties => handler.properties;
-
-  ///указатель, какие парметры в properties обязательные. Пока модель не получит ответ на обязательные параметры, она не перейдет на следующий нод
-  ///["size", "type"]
-  final List<String> required;
-
-  FunctionSchema({required this.uuid, required this.description, required this.required, required this.handler});
+  FunctionSchema({required this.uuid, required this.description, required this.handler});
 
   factory FunctionSchema.fromJson(Map<String, dynamic> json) => _$FunctionSchemaFromJson(json);
   Map<String, dynamic> toJson() => _$FunctionSchemaToJson(this);
 
   Map<String, dynamic> toSaveJson() {
-    return {'handler': handler.toSaveJson(), 'description': description, 'required': required};
+    return {'handler': handler.toSaveJson(), 'description': description};
   }
 
   String toPython() {
@@ -40,8 +33,8 @@ class FunctionSchema {
       name="${handler.name}",
       handler=${handler.name},
       description="$description",
-      properties=${jsonEncode(properties)},
-      required=${jsonEncode(properties.keys.toList())},
+      properties=${jsonEncode(handler.properties)},
+      required=${jsonEncode(handler.properties.keys.toList())},
     )
 ''';
   }

@@ -45,22 +45,16 @@ class NodeSettingsState extends State<NodeSettings> {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 5,
             children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      appState.stage = FillStages.projectSettings;
-                      appState.currentAction = null;
-                      appState.currentSchema = null;
-                      controller.update();
-                    },
-                    icon: Icon(Icons.arrow_back_ios_new),
-                  ),
-                  Text('Назад'),
-                  Spacer(),
-                ],
+              InkWell(
+                onTap: () {
+                  appState.stage = FillStages.projectSettings;
+                  appState.currentAction = null;
+                  appState.currentSchema = null;
+                  controller.update();
+                },
+                child: Row(children: [Icon(Icons.arrow_back_ios_new), Text('Back'), Spacer()]),
               ),
-              Text('Название узла', style: TextStyle(color: Colors.black, fontSize: 12)),
+              Text('Node name', style: TextStyle(color: Colors.black, fontSize: 12)),
               TextFieldGpt(
                 value: widget.node.nodeData.name,
                 maxLength: 20,
@@ -76,10 +70,10 @@ class NodeSettingsState extends State<NodeSettings> {
                   widget.node.nodeData.respondImmediately = value ?? false;
                   controller.update();
                 },
-                title: 'Запускать узел до ответа пользователя',
+                title: 'Run node without waiting user action',
               ),
               SizedBox(height: 5),
-              Text('Стратегия обработки контекста', style: TextStyle(color: Colors.black, fontSize: 12)),
+              Text('Context processing strategy', style: TextStyle(color: Colors.black, fontSize: 12)),
               DropDownMenu<ContextStrategy>(
                 selectedItem: widget.node.nodeData.context_strategy,
                 items: ContextStrategy.values,
@@ -90,18 +84,18 @@ class NodeSettingsState extends State<NodeSettings> {
                 getTitle: (ContextStrategy value) {
                   switch (value) {
                     case ContextStrategy.APPEND:
-                      return 'Накапливать контекст';
+                      return 'Accumulate context';
                     case ContextStrategy.RESET:
-                      return 'Обнулить контекст';
+                      return 'Reset context';
                     case ContextStrategy.RESET_WITH_SUMMARY:
-                      return 'Использовать последние 5 шагов';
+                      return 'Use some of previos context history';
                   }
                 },
               ),
               SizedBox(height: 5),
               Row(
                 children: [
-                  Text('Действия перед запуском узла', style: TextStyle(color: Colors.black, fontSize: 12)),
+                  Text('Action runing before run node', style: TextStyle(color: Colors.black, fontSize: 12)),
                   Spacer(),
                   CircleButton(
                     onTap: () {
@@ -111,7 +105,7 @@ class NodeSettingsState extends State<NodeSettings> {
                       }
                     },
                     icon: CupertinoIcons.add,
-                    tooltip: 'Добавить стадию скрипта',
+                    tooltip: 'Add pre action',
                   ),
                 ],
               ),
@@ -127,7 +121,7 @@ class NodeSettingsState extends State<NodeSettings> {
                         },
                         remove: () {
                           widget.node.nodeData.preActions.removeWhere((ac) => ac == a);
-                          setState(() {});
+                          controller.update();
                         },
                       ),
                     )
@@ -136,24 +130,24 @@ class NodeSettingsState extends State<NodeSettings> {
               SizedBox(height: 5),
               Row(
                 children: [
-                  Text('Системная инструкция для LLM', style: TextStyle(color: Colors.black, fontSize: 12)),
+                  Text('System instruction for LLM', style: TextStyle(color: Colors.black, fontSize: 12)),
                   Spacer(),
                   CircleButton(
                     onTap: () {
                       if (widget.node.nodeData.roleMessage == null) {
                         widget.node.nodeData.roleMessage = Message(
                           role: 'system',
-                          content: 'инструкция для бота помогающая выполнить данный этап',
+                          content: 'Instruction for yuor LLM, where you set scenario of this node',
                         );
                       } else {
                         widget.node.nodeData.roleMessage = null;
                       }
-                      setState(() {});
+                      controller.update();
                     },
                     icon: widget.node.nodeData.roleMessage == null ? CupertinoIcons.add : CupertinoIcons.clear,
                     tooltip: widget.node.nodeData.roleMessage == null
-                        ? 'Добавить системную инструкцию'
-                        : 'Удалить системную инструкцию',
+                        ? 'Add system instruction'
+                        : 'Remove system instruction',
                   ),
                 ],
               ),
@@ -166,7 +160,7 @@ class NodeSettingsState extends State<NodeSettings> {
                   },
                 ),
               SizedBox(height: 5),
-              Text('Задача для LLM на данном этапе', style: TextStyle(color: Colors.black, fontSize: 12)),
+              Text('Target for LLM on this stage', style: TextStyle(color: Colors.black, fontSize: 12)),
               TextFieldGpt(
                 value: widget.node.nodeData.taskMessage.content,
                 maxLength: 20,
@@ -177,28 +171,30 @@ class NodeSettingsState extends State<NodeSettings> {
               SizedBox(height: 5),
               Row(
                 children: [
-                  Text('Обработчики перехода в другие узлы', style: TextStyle(color: Colors.black, fontSize: 12)),
+                  Text(
+                    'Routing scheme for switching to another nodes',
+                    style: TextStyle(color: Colors.black, fontSize: 12),
+                  ),
                   Spacer(),
                   CircleButton(
                     onTap: () {
                       if (widget.node.nodeData.functions.length < 4) {
                         widget.node.nodeData.functions.add(
                           FunctionSchema(
-                            description: 'Переход',
-                            required: [],
+                            description: 'Descript task for LLM for compliting this node',
                             handler: HandlerModel(
-                              flowResultName: 'Название схемы',
+                              flowResultName: 'switch_to_${widget.node.nodeData.functions.length}',
+                              required: [],
                               properties: {},
-                              description: 'Обработчик перехода',
                             ),
                             uuid: Uuid().v4(),
                           ),
                         );
-                        setState(() {});
+                        controller.update();
                       }
                     },
                     icon: CupertinoIcons.add,
-                    tooltip: 'Добавить переход',
+                    tooltip: 'Add flow',
                   ),
                 ],
               ),
@@ -214,7 +210,7 @@ class NodeSettingsState extends State<NodeSettings> {
                         },
                         remove: () {
                           widget.node.nodeData.functions.removeWhere((ac) => ac == a);
-                          setState(() {});
+                          controller.update();
                         },
                       ),
                     )
@@ -223,17 +219,17 @@ class NodeSettingsState extends State<NodeSettings> {
               SizedBox(height: 5),
               Row(
                 children: [
-                  Text('Действия перед выходом из узла', style: TextStyle(color: Colors.black, fontSize: 12)),
+                  Text('Actions before switch to another node', style: TextStyle(color: Colors.black, fontSize: 12)),
                   Spacer(),
                   CircleButton(
                     onTap: () {
                       if (widget.node.nodeData.postActions.length < 4) {
                         widget.node.nodeData.postActions.add(action.Action(type: ActionTypes.end_conversation));
-                        setState(() {});
+                        controller.update();
                       }
                     },
                     icon: CupertinoIcons.add,
-                    tooltip: 'Добавить действие перед выходом из узла',
+                    tooltip: 'Add post action',
                   ),
                 ],
               ),
@@ -242,11 +238,6 @@ class NodeSettingsState extends State<NodeSettings> {
                     .map(
                       (a) => ActionPlate(
                         a: a,
-                        // onTap: () => Navigator.of(context)
-                        //     .push(
-                        //       MaterialPageRoute(builder: (_) => ActionSettings(isPreAction: false, selectedAction: a)),
-                        //     )
-                        //     .whenComplete(() => controller.update()),
                         onTap: () {
                           appState.stage = FillStages.postActionSettings;
                           appState.currentAction = a;
@@ -254,7 +245,7 @@ class NodeSettingsState extends State<NodeSettings> {
                         },
                         remove: () {
                           widget.node.nodeData.postActions.removeWhere((ac) => ac == a);
-                          setState(() {});
+                          controller.update();
                         },
                       ),
                     )

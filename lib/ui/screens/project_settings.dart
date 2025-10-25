@@ -31,19 +31,19 @@ class ProjectSettingsState extends State<ProjectSettings> {
             Row(
               spacing: 5,
               children: [
-                CircleButton(onTap: () {}, icon: Icons.file_open, tooltip: 'Загрузить проект'),
+                CircleButton(onTap: () {}, icon: Icons.file_open, tooltip: 'Load project'),
                 CircleButton(
                   onTap: () {
                     appState.saveProject(controller.flowModel);
                   },
                   icon: Icons.save,
-                  tooltip: 'Сохранить проект',
+                  tooltip: 'Save project',
                 ),
-                CircleButton(onTap: () {}, icon: Icons.import_contacts, tooltip: 'Экспорт в Python'),
-                CircleButton(onTap: () {}, icon: Icons.explicit, tooltip: 'Импорт из Python'),
+                CircleButton(onTap: () {}, icon: Icons.import_contacts, tooltip: 'Export to Python'),
+                CircleButton(onTap: () {}, icon: Icons.explicit, tooltip: 'Import from Python'),
               ],
             ),
-            Text('Краткое наименование', style: TextStyle(color: Colors.black, fontSize: 12)),
+            Text('Short project name', style: TextStyle(color: Colors.black, fontSize: 12)),
             TextFieldGpt(
               value: controller.flowModel.projectName,
               maxLength: 20,
@@ -52,7 +52,7 @@ class ProjectSettingsState extends State<ProjectSettings> {
               },
             ),
             SizedBox(height: 5),
-            Text('Подробное описание', style: TextStyle(color: Colors.black, fontSize: 12)),
+            Text('Project description', style: TextStyle(color: Colors.black, fontSize: 12)),
             TextFieldGpt(
               value: controller.flowModel.projectDescription,
               callBack: (String value) {
@@ -64,14 +64,15 @@ class ProjectSettingsState extends State<ProjectSettings> {
             Row(
               spacing: 5,
               children: [
-                Text('Стадии разговора', style: TextStyle(fontSize: 12)),
+                Text('Speech stages', style: TextStyle(fontSize: 12)),
                 Spacer(),
                 CircleButton(
                   onTap: () {
                     controller.addNode(context);
+                    controller.update();
                   },
                   icon: CupertinoIcons.add,
-                  tooltip: 'Добавить стадию скрипта',
+                  tooltip: 'Add stage',
                 ),
               ],
             ),

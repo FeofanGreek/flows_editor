@@ -23,11 +23,4 @@ class AppStateController with ChangeNotifier {
   }
 }
 
-enum FillStages {
-  projectSettings,
-  nodeSettings,
-  preActionSettings,
-  postActionSettings,
-  flowSchemaSettings,
-  handlerSettings,
-}
+enum FillStages { projectSettings, nodeSettings, preActionSettings, postActionSettings, flowSchemaSettings }

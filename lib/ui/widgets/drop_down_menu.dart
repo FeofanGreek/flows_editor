@@ -30,6 +30,7 @@ class DropDownMenuState<T> extends State<DropDownMenu<T>> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<T>(
+          hint: Text('Выберите значение', style: TextStyle(fontSize: 12)),
           value: widget.selectedItem,
           items: widget.items.map((T mode) {
             return DropdownMenuItem<T>(

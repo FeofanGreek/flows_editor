@@ -98,7 +98,7 @@ class NodeDraggablePlateState extends State<NodeDraggablePlate> {
                                 onTap: () {
                                   if (n.nodeData.functions.length > 1) {
                                     n.nodeData.functions.removeWhere((e) => e == h);
-                                    setState(() {});
+                                    controller.update();
                                   }
                                 },
                                 child: Container(
@@ -161,12 +161,15 @@ class NodeDraggablePlateState extends State<NodeDraggablePlate> {
                             n.nodeData.functions.add(
                               FunctionSchema(
                                 uuid: Uuid().v4(),
-                                description: '',
-                                required: [],
-                                handler: HandlerModel(description: '', flowResultName: '', properties: {}),
+                                description: 'Descript task for LLM for compliting this node',
+                                handler: HandlerModel(
+                                  required: [],
+                                  flowResultName: 'switch_to_${n.nodeData.functions.length}',
+                                  properties: {},
+                                ),
                               ),
                             );
-                            setState(() {});
+                            controller.update();
                           }
                         },
                         icon: const Icon(Icons.add, color: Colors.black, size: 20),

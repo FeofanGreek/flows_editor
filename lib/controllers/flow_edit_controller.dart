@@ -22,8 +22,8 @@ class FLowEditController with ChangeNotifier {
   List<NodeBloc> get nodes => flowModel.nodes;
 
   //получить все связи между нодами для отрисовки
-  List<(Offset, Offset)> get edges {
-    var list = <(Offset, Offset)>[];
+  List<(Offset, Offset, String, String)> get edges {
+    var list = <(Offset, Offset, String, String)>[];
     for (final node in nodes) {
       for (final function in node.nodeData.functions) {
         if (function.handler.nextNodeUuid.isNotEmpty) {
@@ -33,7 +33,7 @@ class FLowEditController with ChangeNotifier {
 
             ///получить оффсет нода
             final nodeOffset = nodes.firstWhereOrNull((n) => n.uuid == nextNOdeUuid)?.getPosition() ?? Offset.zero;
-            list.add((handlerOffset, nodeOffset));
+            list.add((handlerOffset, nodeOffset, nextNOdeUuid, node.uuid));
           }
         }
       }
@@ -160,8 +160,8 @@ class FLowEditController with ChangeNotifier {
   void addNode(BuildContext context) {
     final newNode = NodeBloc(
       nodeData: NodeConfig(
-        name: '',
-        taskMessage: Message(role: 'system', content: 'какой то текст'),
+        name: 'node_${nodes.length}',
+        taskMessage: Message(role: 'system', content: 'add your promt here'),
       ),
       uuid: Uuid().v4(),
     );

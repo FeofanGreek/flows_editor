@@ -8,9 +8,11 @@ part of 'handler_model.dart';
 
 HandlerModel _$HandlerModelFromJson(Map<String, dynamic> json) =>
     HandlerModel(
+        required: (json['required'] as List<dynamic>)
+            .map((e) => e as String)
+            .toList(),
         flowResultName: json['flowResultName'] as String,
         properties: json['properties'] as Map<String, dynamic>,
-        description: json['description'] as String,
       )
       ..addonProperties = (json['addonProperties'] as List<dynamic>)
           .map((e) => AddonPropertiesModel.fromJson(e as Map<String, dynamic>))
@@ -23,7 +25,7 @@ Map<String, dynamic> _$HandlerModelToJson(HandlerModel instance) =>
     <String, dynamic>{
       'flowResultName': instance.flowResultName,
       'properties': instance.properties,
-      'description': instance.description,
+      'required': instance.required,
       'addonProperties': instance.addonProperties,
       'nextNodeUuid': instance.nextNodeUuid,
     };

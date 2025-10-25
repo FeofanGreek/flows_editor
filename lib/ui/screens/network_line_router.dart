@@ -7,6 +7,7 @@ import '../../models/color_cycle.dart';
 import '../../models/net_cell.dart';
 import '../../models/path_painter.dart';
 import '../widgets/bezie_painter.dart';
+import '../widgets/edge_eraser.dart';
 
 ///Рабочая область редактирования flow
 class NetworkLineRouter extends StatefulWidget {
@@ -87,63 +88,34 @@ class NetworkLineRouterState extends State<NetworkLineRouter> {
                       ),
                     ),
                     // Слой для отрисовки пути
-                    //if (false)
-                    // ...controller.edges.map(
-                    //   (edge) => IgnorePointer(
-                    //     child: CustomPaint(
-                    //       painter: PathPainter(
-                    //         vScrollPosition: appState.verticalScrollController.position.pixels,
-                    //         hScrollPosition: appState.horizontalScrollController.position.pixels,
-                    //         path: [edge.outPoint.getPosition()!, ...edge.line!, edge.inPoint.getPosition()!],
-                    //         lineWidth: 8,
-                    //         lineColor: ColorCycle.getColorByIndex(controller.edges.indexWhere((el) => el == edge)),
-                    //       ),
-                    //       size: Size(controller.region.width, controller.region.height),
-                    //     ),
-                    //   ),
-                    // ),
-                    if (true)
-                      ...controller.edges.map(
-                        (node) => IgnorePointer(
-                          child: CustomPaint(
-                            painter: HyperbolicCurvePainter(
-                              start: node.$1 - Offset(appState.leftSide, 0),
-                              end: node.$2 - Offset(appState.leftSide, 0),
-                              hScrollPosition: appState.horizontalScrollController.position.pixels,
-                              vScrollPosition: appState.verticalScrollController.position.pixels,
-                              strokeWidth: 8,
-                              color: ColorCycle.getColorByIndex(controller.edges.indexWhere((el) => el == node)),
-                            ),
+                    ...controller.edges.map(
+                      (node) => IgnorePointer(
+                        child: CustomPaint(
+                          painter: HyperbolicCurvePainter(
+                            start: node.$1 - Offset(appState.leftSide, 0),
+                            end: node.$2 - Offset(appState.leftSide, 0),
+                            hScrollPosition: appState.horizontalScrollController.position.pixels,
+                            vScrollPosition: appState.verticalScrollController.position.pixels,
+                            strokeWidth: 8,
+                            color: ColorCycle.getColorByIndex(controller.edges.indexWhere((el) => el == node)),
                           ),
                         ),
                       ),
-                    // ...controller.edges.map(
-                    //   (edge) => IgnorePointer(
-                    //     child: CustomPaint(
-                    //       painter: HyperbolicCurvePainterPath(
-                    //         offsets: edge.line!,
-                    //         strokeWidth: 8,
-                    //         color: ColorCycle.getColorByIndex(controller.edges.indexWhere((el) => el == edge)),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    if (false)
-                      ...controller.region.lineCells.map(
-                        (c) => Positioned(
-                          top: c.coords.dy,
-                          left: c.coords.dx,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: c.bisy ? Colors.red.withValues(alpha: 0.2) : Colors.green.withValues(alpha: 0.2),
-                              border: Border.all(),
-                              borderRadius: const BorderRadius.all(Radius.circular(2)),
-                            ),
-                            width: NetCell.size.width,
-                            height: NetCell.size.height,
-                          ),
-                        ),
+                    ),
+                    ...controller.edges.map(
+                      (node) => EdgeEraser(
+                        start: node.$1 - Offset(appState.leftSide, 0),
+                        end: node.$2 - Offset(appState.leftSide, 0),
+                        onChanged: () {
+                          final filteredNode = controller.nodes.firstWhere((e) => e.uuid == node.$4);
+                          final filteredHandler = filteredNode.nodeData.functions.firstWhere(
+                            (e) => e.handler.nextNodeUuid.contains(node.$3) && e.handler.getPosition() == node.$1,
+                          );
+                          filteredHandler.handler.nextNodeUuid.removeWhere((e) => e == node.$3);
+                          controller.update();
+                        },
                       ),
+                    ),
 
                     ///Блоки нодов
                     ...controller.nodes.map((n) => NodeDraggablePlate(n: n)),

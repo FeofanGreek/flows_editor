@@ -6,7 +6,6 @@ import '../../controllers/app_state_controller.dart';
 import '../../controllers/flow_edit_controller.dart';
 import 'action_settings.dart';
 import 'flow_schema_settings.dart';
-import 'handler_settings.dart';
 import 'network_line_router.dart';
 import '../widgets/circle_button.dart';
 import 'node_settings.dart';
@@ -53,7 +52,6 @@ class ProjectViewState extends State<ProjectView> {
                 selectedAction: appState.currentAction!,
               ),
               FillStages.flowSchemaSettings => FlowSchemaSettings(selectedSchema: appState.currentSchema!),
-              FillStages.handlerSettings => HandlerSettings(),
             },
             Positioned(left: appState.leftSide, child: NetworkLineRouter()),
             Positioned(

@@ -9,6 +9,7 @@ import '../widgets/text_field_gpt.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
 import 'package:highlight/languages/python.dart';
+import 'package:highlight/languages/java.dart';
 
 class ActionSettings extends StatefulWidget {
   const ActionSettings({super.key, required this.isPreAction, required this.selectedAction});
@@ -21,12 +22,30 @@ class ActionSettings extends StatefulWidget {
 }
 
 class ActionSettingsState extends State<ActionSettings> {
-  final codeController = CodeController(
-    text: '''async def complete_intake(args: FlowArgs, flow_manager: FlowManager) -> tuple[None, NodeConfig]:
+  String codeSnipet = '''#[START section1]
+async def yor_action_func_name(args: FlowArgs, flow_manager: FlowManager) -> tuple[None, NodeConfig]:
+#[END section1]
     """Handler to complete the intake process."""
-    return None, create_end_node()''', // Initial code
-    language: python,
-  );
+    #[START section2] return None, create_end_node()#[END section2]''';
+
+  late CodeController codeController;
+
+  @override
+  void initState() {
+    codeSnipet =
+        '''#[START section1]
+async def ${widget.selectedAction.handlerName}(action: dict, flow_manager: FlowManager) -> None:
+        #[END section1]
+    """Handler to complete the intake process."""''';
+    codeController = CodeController(
+      text: codeSnipet,
+      language: python,
+      namedSectionParser: const BracketsStartEndNamedSectionParser(),
+    );
+    codeController.readOnlySectionNames = {'section1', 'section2'};
+    print(codeController.code.namedSections);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,19 +60,13 @@ class ActionSettingsState extends State<ActionSettings> {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 5,
           children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    appState.stage = FillStages.nodeSettings;
-                    appState.currentAction = null;
-                    controller.update();
-                  },
-                  icon: Icon(Icons.arrow_back_ios_new),
-                ),
-                Text('Назад'),
-                Spacer(),
-              ],
+            InkWell(
+              onTap: () {
+                appState.stage = FillStages.nodeSettings;
+                appState.currentAction = null;
+                controller.update();
+              },
+              child: Row(children: [Icon(Icons.arrow_back_ios_new), Text('Back'), Spacer()]),
             ),
             Text('Выберите тип действия', style: TextStyle(color: Colors.black, fontSize: 12)),
             DropDownMenu<ActionTypes>(
@@ -97,6 +110,18 @@ class ActionSettingsState extends State<ActionSettings> {
                     maxLength: 20,
                     callBack: (String value) {
                       widget.selectedAction.handlerName = value;
+                      String updated = codeSnipet.replaceAll(
+                        RegExp(r'(#\[START section1\]).*?(#\[END section1\])', dotAll: true),
+                        '''#[START section1] 
+async def $value(args: FlowArgs, flow_manager: FlowManager) -> tuple[None, NodeConfig]: 
+                        #[END section1]''',
+                      );
+                      codeController = CodeController(
+                        text: updated,
+                        language: python,
+                        namedSectionParser: const BracketsStartEndNamedSectionParser(),
+                      );
+                      setState(() {});
                     },
                   ),
                   CodeTheme(
