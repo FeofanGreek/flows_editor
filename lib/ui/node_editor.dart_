@@ -1,0 +1,120 @@
+import 'package:flutter/material.dart';
+import 'package:pipecatflowseditor/ui/widgets/circle_button.dart';
+import 'package:pipecatflowseditor/ui/widgets/text_field_gpt.dart';
+
+import '../models/node_model.dart';
+import '../utils/enums_lib.dart';
+
+class NodeEditor extends StatefulWidget {
+  const NodeEditor({super.key});
+
+  @override
+  State<NodeEditor> createState() => NodeEditorState();
+}
+
+class NodeEditorState extends State<NodeEditor> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  ActionTypes types = ActionTypes.end_conversation;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      width: 300,
+      padding: EdgeInsets.all(8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            spacing: 5,
+            children: [
+              Text('Настройки узла', style: TextStyle(fontSize: 12)),
+              Spacer(),
+              CircleButton(onTap: () {}, icon: Icons.save, tooltip: 'Сохранить настройки'),
+              CircleButton(onTap: () {}, icon: Icons.close, tooltip: 'Закрыть'),
+            ],
+          ),
+          SizedBox(height: 10),
+          Divider(height: 1, color: Colors.grey),
+          SizedBox(height: 10),
+          Text('fdgdfg', style: TextStyle(fontSize: 12, color: Colors.grey)),
+          SizedBox(height: 10),
+          Text(
+            'Действие, которое выполняется перед выполнением инструкции (необязательно)',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+
+          Container(
+            width: 300,
+            height: 37,
+            padding: const EdgeInsets.symmetric(horizontal: 6.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey, width: 1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<ActionTypes>(
+                value: types,
+                items: ActionTypes.values.map((ActionTypes mode) {
+                  return DropdownMenuItem<ActionTypes>(
+                    value: mode,
+                    child: Text(
+                      mode.description,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 12),
+                    ), // Отображение имени
+                  );
+                }).toList(),
+                selectedItemBuilder: (context) => ActionTypes.values.map((ActionTypes mode) {
+                  return DropdownMenuItem<ActionTypes>(
+                    value: mode,
+                    child: SizedBox(
+                      width: 240,
+                      child: Text(mode.description, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12)),
+                    ), // Отображение имени
+                  );
+                }).toList(),
+                onChanged: (ActionTypes? newValue) {
+                  types = newValue!;
+                  setState(() {});
+                },
+              ),
+            ),
+          ),
+          switch (types) {
+            ActionTypes.tts_say => TextFieldGpt(value: 'Фраза', callBack: (value) {}),
+            ActionTypes.end_conversation => SizedBox(),
+            ActionTypes.function => Text('Конструктор функции', style: TextStyle(fontSize: 12, color: Colors.grey)),
+            //ActionTypes.transfer_call => TextFieldGpt(value: 'Номер телефона', callBack: (value) {}),
+          },
+
+          Text(
+            'Инструкция применяется в первом узле скрипта и является аналогом системной инструкции для бота',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+          TextFieldGpt(value: 'dfgfdg', callBack: (value) {}),
+          Text(
+            'Инструкция применяется как указатель, что делать боту в на этом этапе',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+          TextFieldGpt(value: 'dgfdg', callBack: (value) {}),
+          CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            value: false,
+            onChanged: (value) {},
+            title: Text(
+              'Должна ли LLM начать генерировать ответ сразу (true) или ждать ответа пользователя (false)',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ),
+          Spacer(),
+        ],
+      ),
+    );
+  }
+}

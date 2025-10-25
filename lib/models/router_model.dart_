@@ -1,0 +1,48 @@
+import 'node_config_model.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'router_model.g.dart';
+
+//Данный класс определяет переключение на следующий NodeConfig
+//находится в отдельной части кода или даже вынесен в отдельный файл
+@JsonSerializable()
+class RouterModel {
+  List<NodeConfig> nodes = [];
+
+  //Router({required this.nodes, required this.inputParameters});
+
+  String returnManyNodesLogic() {
+    print('ТУТ Логическая ошибка ПЕРЕДЕЛАТЬ');
+    final buffer = StringBuffer();
+    for (int i = 0; i < nodes.length; i++) {
+      for (int ii = 0; ii < nodes[i].functions.length; ii++) {
+        for (int iii = 0; iii < nodes[i].functions[ii].handler.nextNodeUuid.length; iii++) {
+          String prefix;
+          if (iii == 0) {
+            prefix = '        if';
+          } else if (iii == nodes[i].functions[ii].handler.nextNodeUuid.length - 1) {
+            prefix = '        else';
+          } else {
+            prefix = '        elif';
+          }
+          buffer.write(prefix);
+          buffer.write(' #настройте_условие:\n');
+          //TODO найти аргументы
+          buffer.write('          return (arg, ${nodes[i].functions[ii].handler.nextNodeUuid[iii]}())\n');
+        }
+      }
+    }
+    return buffer.toString();
+  }
+
+  String toPython() {
+    return '''
+${returnManyNodesLogic()}
+''';
+  }
+
+  RouterModel({required this.nodes});
+
+  factory RouterModel.fromJson(Map<String, dynamic> json) => _$RouterModelFromJson(json);
+  Map<String, dynamic> toJson() => _$RouterModelToJson(this);
+}

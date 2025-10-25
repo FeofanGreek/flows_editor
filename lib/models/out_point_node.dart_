@@ -1,0 +1,35 @@
+import 'package:flutter/material.dart';
+import 'node_edge.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'out_point_node.g.dart';
+
+//класс точки выхода из нода (хэндлер)
+@JsonSerializable()
+class OutNodeDDD {
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final GlobalKey key = GlobalKey();
+  //установленное для этого хэндлера ребро. Входов в функцию может быть много, выход для каждого хэндлера этого нода только один
+  NodeEdge? edge;
+
+  //Функция для получения глобальной позиции виджета
+  Offset? getPosition() {
+    final context = key.currentContext;
+
+    if (context == null) {
+      return null;
+    }
+
+    final RenderBox renderBox = context.findRenderObject()! as RenderBox;
+    return renderBox.localToGlobal(Offset.zero);
+  }
+
+  OutNode({this.edge});
+
+  factory OutNode.fromJson(Map<String, dynamic> json) => _$OutNodeFromJson(json);
+  Map<String, dynamic> toJson() => _$OutNodeToJson(this);
+
+  Map<String, dynamic> toSaveJson() {
+    return {'edge': edge?.toSaveJson()};
+  }
+}

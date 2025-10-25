@@ -1,0 +1,191 @@
+import 'package:flutter/material.dart';
+import 'net_cell.dart';
+
+class PathFinder {
+  final List<List<NetCell>> cells;
+  final Offset start;
+  final Offset end;
+
+  PathFinder({required this.cells, required this.start, required this.end});
+
+  // Направления: right, down, left, up
+  static const List<Offset> directions = [
+    Offset(1, 0), // right
+    Offset(0, 1), // down
+    Offset(-1, 0), // left
+    Offset(0, -1), // up
+  ];
+
+  // Приоритет правого поворота
+  // Если шли вправо (0), приоритет: вправо, вверх, вниз, влево
+  static const List<List<int>> turnPriority = [
+    [0, 3, 1, 2], // from right: right, up, down, left
+    [1, 0, 2, 3], // from down: down, right, left, up
+    [2, 1, 3, 0], // from left: left, down, up, right
+    [3, 2, 0, 1], // from up: up, left, right, down
+  ];
+
+  /// Получить ячейку по координатам сетки
+  NetCell? getCellAt(int row, int col) {
+    if (row < 0 || row >= cells.length || col < 0 || col >= cells[row].length) {
+      return null;
+    }
+    return cells[row][col];
+  }
+
+  /// Преобразовать Offset в координаты сетки
+  (int, int)? offsetToGridCoords(Offset offset) {
+    for (int row = 0; row < cells.length; row++) {
+      for (int col = 0; col < cells[row].length; col++) {
+        if (cells[row][col].cellRegion.contains(offset)) {
+          return (row, col);
+        }
+      }
+    }
+    return null;
+  }
+
+  /// Преобразовать координаты сетки в центр ячейки
+  Offset gridCoordsToOffset(int row, int col) {
+    final cell = getCellAt(row, col);
+    if (cell != null) {
+      final rect = cell.cellRegion;
+      return Offset(rect.center.dx, rect.center.dy);
+    }
+    return Offset.zero;
+  }
+
+  /// Основной метод поиска маршрута
+  List<Offset> findPath() {
+    final startCoords = offsetToGridCoords(start);
+    final endCoords = offsetToGridCoords(end);
+
+    if (startCoords == null || endCoords == null) {
+      return [start, end];
+    }
+
+    final (startRow, startCol) = startCoords;
+    final (endRow, endCol) = endCoords;
+
+    // Проверка занятости начальной и конечной ячеек
+    if (getCellAt(startRow, startCol)?.bisy == true || getCellAt(endRow, endCol)?.bisy == true) {
+      return [start, end];
+    }
+
+    final path = _aStarSearch(startRow, startCol, endRow, endCol);
+
+    if (path.isEmpty) {
+      return [start, end];
+    }
+
+    // Преобразуем координаты сетки в Offset
+    return path.map((coord) => gridCoordsToOffset(coord.$1, coord.$2)).toList();
+  }
+
+  /// A* поиск с учетом приоритета правого поворота
+  List<(int, int)> _aStarSearch(int startRow, int startCol, int endRow, int endCol) {
+    final openSet = <_Node>{};
+    final closedSet = <(int, int)>{};
+    final gScore = <(int, int), double>{};
+    final fScore = <(int, int), double>{};
+    final cameFrom = <(int, int), (_Node, int)>{};
+
+    final startNode = _Node(startRow, startCol, 0, _heuristic(startRow, startCol, endRow, endCol));
+    openSet.add(startNode);
+    gScore[(startRow, startCol)] = 0;
+    fScore[(startRow, startCol)] = _heuristic(startRow, startCol, endRow, endCol);
+
+    while (openSet.isNotEmpty) {
+      final current = openSet.reduce((a, b) => fScore[a.coord]! < fScore[b.coord]! ? a : b);
+
+      if (current.coord == (endRow, endCol)) {
+        return _reconstructPath(cameFrom, current.coord);
+      }
+
+      openSet.remove(current);
+      closedSet.add(current.coord);
+
+      final (currRow, currCol) = current.coord;
+      final lastDirIndex = current.lastDirIndex;
+
+      // Выбираем направления с приоритетом правого поворота
+      final dirIndices = lastDirIndex >= 0 ? turnPriority[lastDirIndex] : [0, 1, 2, 3];
+
+      for (final dirIdx in dirIndices) {
+        final dir = directions[dirIdx];
+        final newRow = currRow + dir.dy.toInt();
+        final newCol = currCol + dir.dx.toInt();
+        final neighbor = (newRow, newCol);
+
+        if (closedSet.contains(neighbor)) continue;
+
+        final cell = getCellAt(newRow, newCol);
+        if (cell == null || cell.bisy) continue;
+
+        final tentativeGScore = gScore[current.coord]! + 1;
+
+        if (!gScore.containsKey(neighbor) || tentativeGScore < gScore[neighbor]!) {
+          cameFrom[neighbor] = (current, dirIdx);
+          gScore[neighbor] = tentativeGScore;
+          fScore[neighbor] = tentativeGScore + _heuristic(newRow, newCol, endRow, endCol);
+
+          openSet.removeWhere((n) => n.coord == neighbor);
+          openSet.add(_Node(newRow, newCol, tentativeGScore, fScore[neighbor]!, lastDirIndex: dirIdx));
+        }
+      }
+    }
+
+    return [];
+  }
+
+  /// Эвристика для A* (Manhattan distance)
+  double _heuristic(int row, int col, int endRow, int endCol) {
+    return ((row - endRow).abs() + (col - endCol).abs()).toDouble();
+  }
+
+  /// Восстановление пути
+  List<(int, int)> _reconstructPath(Map<(int, int), (_Node, int)> cameFrom, (int, int) current) {
+    final path = [current];
+    while (cameFrom.containsKey(current)) {
+      final (node, _) = cameFrom[current]!;
+      current = node.coord;
+      path.insert(0, current);
+    }
+    return path;
+  }
+}
+
+class _Node {
+  final int row;
+  final int col;
+  final double g;
+  final double h;
+  final int lastDirIndex;
+
+  _Node(this.row, this.col, this.g, this.h, {this.lastDirIndex = -1});
+
+  (int, int) get coord => (row, col);
+
+  double get f => g + h;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _Node && runtimeType == other.runtimeType && row == other.row && col == other.col;
+
+  @override
+  int get hashCode => Object.hash(row, col);
+}
+
+// Пример использования:
+/*
+final pathFinder = PathFinder(
+  cells: myGrid,
+  start: Offset(10, 10),
+  end: Offset(500, 500),
+);
+
+final path = pathFinder.findPath();
+
+// path содержит список Offset точек маршрута
+*/
