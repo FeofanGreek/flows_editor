@@ -4,21 +4,14 @@ part 'array_property_model.g.dart';
 
 @JsonSerializable()
 class ArrayPropertyModel {
-  final String description;
-  final List<num> enums;
-  final String default_value;
-  final Map items;
-  final int? minItems;
-  final int? maxItems;
+  String description;
+  Map items;
+  int? minItems;
+  int? maxItems;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String key = '';
 
-  ArrayPropertyModel({
-    required this.description,
-    required this.enums,
-    required this.default_value,
-    required this.items,
-    this.minItems,
-    this.maxItems,
-  });
+  ArrayPropertyModel({required this.description, required this.items, this.minItems, this.maxItems});
 
   factory ArrayPropertyModel.fromJson(Map<String, dynamic> json) => _$ArrayPropertyModelFromJson(json);
   Map<String, dynamic> toJson() => _$ArrayPropertyModelToJson(this);

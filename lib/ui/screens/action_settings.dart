@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/app_state_controller.dart';
 import '../../controllers/flow_edit_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/action_model.dart' as action;
 import '../../utils/enums_lib.dart';
 import '../widgets/drop_down_menu.dart';
@@ -9,7 +10,6 @@ import '../widgets/text_field_gpt.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
 import 'package:highlight/languages/python.dart';
-import 'package:highlight/languages/java.dart';
 
 class ActionSettings extends StatefulWidget {
   const ActionSettings({super.key, required this.isPreAction, required this.selectedAction});
@@ -43,7 +43,7 @@ async def ${widget.selectedAction.handlerName}(action: dict, flow_manager: FlowM
       namedSectionParser: const BracketsStartEndNamedSectionParser(),
     );
     codeController.readOnlySectionNames = {'section1', 'section2'};
-    print(codeController.code.namedSections);
+    //print(codeController.code.namedSections);
     super.initState();
   }
 
@@ -51,6 +51,7 @@ async def ${widget.selectedAction.handlerName}(action: dict, flow_manager: FlowM
   Widget build(BuildContext context) {
     final controller = context.watch<FLowEditController>();
     final appState = context.watch<AppStateController>();
+    final loc = AppLocalizations.of(context)!;
     return Container(
       constraints: BoxConstraints(minWidth: 400, maxWidth: appState.leftSide),
       child: Padding(
@@ -66,9 +67,9 @@ async def ${widget.selectedAction.handlerName}(action: dict, flow_manager: FlowM
                 appState.currentAction = null;
                 controller.update();
               },
-              child: Row(children: [Icon(Icons.arrow_back_ios_new), Text('Back'), Spacer()]),
+              child: Row(children: [Icon(Icons.arrow_back_ios_new), Text(loc.back), Spacer()]),
             ),
-            Text('Выберите тип действия', style: TextStyle(color: Colors.black, fontSize: 12)),
+            Text(loc.selectActionType, style: TextStyle(color: Colors.black, fontSize: 12)),
             DropDownMenu<ActionTypes>(
               selectedItem: widget.selectedAction.type,
               items: ActionTypes.values,
@@ -85,13 +86,16 @@ async def ${widget.selectedAction.handlerName}(action: dict, flow_manager: FlowM
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 5,
                 children: [
-                  Text('Фраза, которую произнесет бот', style: TextStyle(color: Colors.black, fontSize: 12)),
+                  Text(loc.phraseWichBotSayFirst, style: TextStyle(color: Colors.black, fontSize: 12)),
                   TextFieldGpt(
                     value: widget.selectedAction.text ?? '',
                     maxLength: 20,
                     callBack: (String value) {
                       widget.selectedAction.text = value;
                     },
+                    hintText: loc.phraseWichBotSayFirst,
+                    isNumber: false,
+                    onlyLatin: false,
                   ),
                 ],
               ),
@@ -101,10 +105,7 @@ async def ${widget.selectedAction.handlerName}(action: dict, flow_manager: FlowM
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 5,
                 children: [
-                  Text(
-                    'Название функции и ее код на Python, которую выполнит бот',
-                    style: TextStyle(color: Colors.black, fontSize: 12),
-                  ),
+                  Text(loc.nameFunctionAndPythonCode, style: TextStyle(color: Colors.black, fontSize: 12)),
                   TextFieldGpt(
                     value: widget.selectedAction.handlerName ?? '',
                     maxLength: 20,
@@ -123,6 +124,9 @@ async def $value(args: FlowArgs, flow_manager: FlowManager) -> tuple[None, NodeC
                       );
                       setState(() {});
                     },
+                    hintText: loc.nameOfFunction,
+                    isNumber: false,
+                    onlyLatin: true,
                   ),
                   CodeTheme(
                     data: CodeThemeData(styles: monokaiSublimeTheme),
@@ -137,8 +141,6 @@ async def $value(args: FlowArgs, flow_manager: FlowManager) -> tuple[None, NodeC
                 ],
               ),
             },
-            //widget.selectedAction.handlerName
-            //widget.selectedAction.
           ],
         ),
       ),

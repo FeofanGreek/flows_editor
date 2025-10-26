@@ -3,13 +3,25 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import 'circle_button.dart';
 
 class TextFieldGpt extends StatefulWidget {
-  const TextFieldGpt({super.key, required this.value, required this.callBack, this.maxLength});
+  const TextFieldGpt({
+    required this.value,
+    required this.callBack,
+    required this.hintText,
+    required this.isNumber,
+    required this.onlyLatin,
+    this.maxLength,
+    super.key,
+  });
   final String value;
+  final String hintText;
   final int? maxLength;
+  final bool isNumber;
+  final bool onlyLatin;
 
   final Function(String) callBack;
 
@@ -30,21 +42,24 @@ class TextFieldGptState extends State<TextFieldGpt> {
   Widget build(BuildContext context) {
     return TextField(
       controller: textEditingController,
-      keyboardType: TextInputType.multiline,
+      keyboardType: widget.isNumber ? TextInputType.number : TextInputType.multiline,
       textInputAction: TextInputAction.newline,
       style: const TextStyle(fontSize: 12.0, height: 1.2),
       minLines: 1,
-      maxLines: null,
+      maxLines: !widget.isNumber && (widget.maxLength ?? 0) > 20 ? null : 1,
       maxLength: widget.maxLength,
       textAlignVertical: TextAlignVertical.center,
       textAlign: TextAlign.left,
+      inputFormatters: [
+        if (widget.onlyLatin && !widget.isNumber) FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9 ]')),
+        if (widget.isNumber) FilteringTextInputFormatter.allow(RegExp('[0-9].')),
+      ],
       decoration: InputDecoration(
         isDense: false,
-        hintText: 'Введите текст...',
+        hintText: widget.hintText,
         hintStyle: const TextStyle(fontSize: 12.0, height: 1.2),
         counter: SizedBox(),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        //contentPadding: const EdgeInsets.only(left: 10, bottom: 15, top: 3),
         visualDensity: VisualDensity.comfortable,
         //suffix: SizedBox(
         //  width: 20,

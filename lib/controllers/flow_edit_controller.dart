@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pipecatflowseditor/utils/list_extension.dart';
 import 'package:uuid/uuid.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/block_node.dart';
 import '../models/flow_function_schema.dart';
 import '../models/flow_model.dart';
@@ -158,10 +159,11 @@ class FLowEditController with ChangeNotifier {
 
   /// Обновленная функция addNode в вашем FLowEditController
   void addNode(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final newNode = NodeBloc(
       nodeData: NodeConfig(
         name: 'node_${nodes.length}',
-        taskMessage: Message(role: 'system', content: 'add your promt here'),
+        taskMessage: Message(role: 'system', content: loc.targetDescription),
       ),
       uuid: Uuid().v4(),
     );
@@ -177,6 +179,7 @@ class FLowEditController with ChangeNotifier {
     } else {
       print('Не удалось найти свободное место для блока');
     }
+    notifyListeners();
   }
 
   void removeNode(int index) {

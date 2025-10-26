@@ -12,7 +12,7 @@ NodeConfig _$NodeConfigFromJson(Map<String, dynamic> json) =>
         taskMessage: Message.fromJson(
           json['taskMessage'] as Map<String, dynamic>,
         ),
-        respondImmediately: json['respondImmediately'] as bool? ?? true,
+        respondImmediately: json['respondImmediately'] as bool? ?? false,
       )
       ..roleMessage = json['roleMessage'] == null
           ? null

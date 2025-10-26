@@ -6,6 +6,7 @@ import 'package:pipecatflowseditor/ui/widgets/elevated_round_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/flow_edit_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../widgets/text_field_gpt.dart';
 
 class ReadmePage extends StatefulWidget {
@@ -28,11 +29,10 @@ class ReadmePageState extends State<ReadmePage> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<FLowEditController>();
-
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: Text('User guide'), toolbarHeight: 40, backgroundColor: Colors.black12),
+      appBar: AppBar(title: Text(loc.userGuide), toolbarHeight: 40, backgroundColor: Colors.black12),
       body: Padding(
         padding: EdgeInsets.all(8),
         child: FutureBuilder(

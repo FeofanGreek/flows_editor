@@ -4,14 +4,16 @@ part 'number_property_model.g.dart';
 
 @JsonSerializable()
 class NumberPropertyModel {
-  final String description;
-  final List<num> enums;
-  final String default_value;
-  final num? minimun;
-  final num? maximum;
-  final num? exlusiveMinimum;
-  final num? exlusiveMaximum;
-  final num? multipleOf;
+  String description;
+  List<num>? enums;
+  num? default_value;
+  num? minimun;
+  num? maximum;
+  num? exlusiveMinimum;
+  num? exlusiveMaximum;
+  num? multipleOf;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String key = '';
 
   NumberPropertyModel({
     required this.description,

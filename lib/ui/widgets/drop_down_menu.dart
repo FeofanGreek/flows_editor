@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+
 class DropDownMenu<T> extends StatefulWidget {
   const DropDownMenu({
     super.key,
@@ -20,6 +22,7 @@ class DropDownMenu<T> extends StatefulWidget {
 class DropDownMenuState<T> extends State<DropDownMenu<T>> {
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Container(
       width: 400,
       //height: 37,
@@ -30,7 +33,7 @@ class DropDownMenuState<T> extends State<DropDownMenu<T>> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<T>(
-          hint: Text('Выберите значение', style: TextStyle(fontSize: 12)),
+          hint: Text(loc.selectValue, style: TextStyle(fontSize: 12)),
           value: widget.selectedItem,
           items: widget.items.map((T mode) {
             return DropdownMenuItem<T>(

@@ -4,6 +4,7 @@ import 'package:pipecatflowseditor/ui/screens/project_settings.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/app_state_controller.dart';
 import '../../controllers/flow_edit_controller.dart';
+import '../../l10n/app_localizations.dart';
 import 'action_settings.dart';
 import 'flow_schema_settings.dart';
 import 'network_line_router.dart';
@@ -32,6 +33,8 @@ class ProjectViewState extends State<ProjectView> {
   Widget build(BuildContext context) {
     final controller = context.watch<FLowEditController>();
     final appState = context.watch<AppStateController>();
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
@@ -92,7 +95,7 @@ class ProjectViewState extends State<ProjectView> {
               controller.update();
             },
             icon: CupertinoIcons.gear,
-            tooltip: 'Настройка проекта',
+            tooltip: loc.projectSettings,
           ),
         ],
       ),

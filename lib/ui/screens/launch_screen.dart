@@ -3,6 +3,8 @@ import 'package:pipecatflowseditor/ui/screens/project_view.dart';
 import 'package:pipecatflowseditor/ui/screens/readme_page.dart';
 import 'package:pipecatflowseditor/ui/widgets/elevated_round_button.dart';
 
+import '../../l10n/app_localizations.dart';
+
 class LaunchScreen extends StatefulWidget {
   const LaunchScreen({super.key});
 
@@ -13,6 +15,7 @@ class LaunchScreen extends StatefulWidget {
 class LaunchScreenState extends State<LaunchScreen> {
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -22,12 +25,12 @@ class LaunchScreenState extends State<LaunchScreen> {
             Spacer(),
             SizedBox(
               width: 300,
-              child: ElevatedRoundButton(title: 'Открыть сохраненый проект', onPressed: () {}),
+              child: ElevatedRoundButton(title: loc.openSavedProject, onPressed: () {}),
             ),
             SizedBox(
               width: 300,
               child: ElevatedRoundButton(
-                title: 'Начать новый проект',
+                title: loc.startNewProject,
                 onPressed: () =>
                     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => ProjectView())),
               ),
@@ -35,7 +38,7 @@ class LaunchScreenState extends State<LaunchScreen> {
             SizedBox(
               width: 300,
               child: ElevatedRoundButton(
-                title: 'Информация о приложении',
+                title: loc.informationAboutApp,
                 onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => ReadmePage())),
               ),
             ),

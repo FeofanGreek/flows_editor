@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pipecatflowseditor/ui/widgets/text_field_gpt.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../models/flowschema_properties_models/number_property_model.dart';
 
 class NumberPropertyWidget extends StatefulWidget {
@@ -13,34 +14,94 @@ class NumberPropertyWidget extends StatefulWidget {
 }
 
 class NumberPropertyWidgetState extends State<NumberPropertyWidget> {
-  final property = NumberPropertyModel(description: '', enums: [], default_value: '');
+  final property = NumberPropertyModel(description: '', enums: [], default_value: null);
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Column(
+      spacing: 5,
       children: [
-        Text('Описание для настройки для LLM'),
-        TextFieldGpt(value: property.description, callBack: (String p1) {}),
-        Text('Возможные значения из которых LLM сделает выбор (поле может быть пустым)'),
-        TextFieldGpt(value: property.enums.toString(), callBack: (String p1) {}),
-        Text('Значение по умолчанию, если выбор не может быть сделан'),
-        TextFieldGpt(value: property.default_value, callBack: (String p1) {}),
-        Text('Минимальное и максимально допустимое значение (включительно). (поле может быть пустым)'),
+        Text(loc.propertyDescriptionForLLM),
+        TextFieldGpt(
+          value: property.description,
+          callBack: (String p1) {},
+          hintText: loc.description,
+          isNumber: false,
+          onlyLatin: false,
+        ),
+        Text(loc.possibleValuesForLLMChoose),
+        TextFieldGpt(
+          value: property.enums != null ? property.enums!.join(', ') : '',
+          callBack: (String p1) {},
+          hintText: loc.listValues,
+          isNumber: false,
+          onlyLatin: false,
+        ),
+        Text(loc.defaultValueIfLLMCannotMakeChoice),
+        Text('TODO тут селектор из имеющихся'),
+        TextFieldGpt(
+          value: (property.default_value ?? 0).toString(),
+          callBack: (String p1) {},
+          hintText: 'List of values',
+          isNumber: false,
+          onlyLatin: false,
+        ),
+        Text(loc.minimumAndMaximumAllowedValues),
         Row(
+          spacing: 5,
           children: [
-            TextFieldGpt(value: property.minimun.toString(), callBack: (String p1) {}),
-            TextFieldGpt(value: property.maximum.toString(), callBack: (String p1) {}),
+            Expanded(
+              child: TextFieldGpt(
+                value: property.minimun.toString(),
+                callBack: (String p1) {},
+                hintText: loc.minIntegerValue,
+                isNumber: true,
+                onlyLatin: false,
+              ),
+            ),
+            Expanded(
+              child: TextFieldGpt(
+                value: property.maximum.toString(),
+                callBack: (String p1) {},
+                hintText: loc.maxIntegerValue,
+                isNumber: true,
+                onlyLatin: false,
+              ),
+            ),
           ],
         ),
-        Text('Значение должно быть строго больше или меньше, чем указанное.(поле может быть пустым)'),
+        Text(loc.valueMustStrictlyGreaterLessSpecifiedValue),
         Row(
           children: [
-            TextFieldGpt(value: property.exlusiveMinimum.toString(), callBack: (String p1) {}),
-            TextFieldGpt(value: property.exlusiveMaximum.toString(), callBack: (String p1) {}),
+            Expanded(
+              child: TextFieldGpt(
+                value: property.exlusiveMinimum.toString(),
+                callBack: (String p1) {},
+                hintText: loc.minIntegerValue,
+                isNumber: true,
+                onlyLatin: false,
+              ),
+            ),
+            Expanded(
+              child: TextFieldGpt(
+                value: property.exlusiveMaximum.toString(),
+                callBack: (String p1) {},
+                hintText: loc.maxIntegerValue,
+                isNumber: true,
+                onlyLatin: false,
+              ),
+            ),
           ],
         ),
-        Text('Значение должно быть кратно указанному числу (например, `0.5`) (поле может быть пустым)'),
-        TextFieldGpt(value: property.multipleOf.toString(), callBack: (String p1) {}),
+        Text(loc.valueMustMultipleSpecifiedNumber),
+        TextFieldGpt(
+          value: property.multipleOf.toString(),
+          callBack: (String p1) {},
+          hintText: loc.integerValue,
+          isNumber: true,
+          onlyLatin: false,
+        ),
       ],
     );
   }

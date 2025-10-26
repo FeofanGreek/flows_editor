@@ -29,10 +29,10 @@ class HandlerModel {
   //                 "description": "Type of pizza",
   //             },
   //         }
-  final Map<String, dynamic> properties;
+  Map<String, dynamic> properties;
 
   ///указатель, какие парметры в properties обязательные. Пока модель не получит ответ на обязательные параметры, она не перейдет на следующий нод
-  final List<String> required;
+  List<String> required = [];
 
   List<AddonPropertiesModel> addonProperties = [];
 

@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../controllers/app_state_controller.dart';
 import '../../controllers/flow_edit_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/block_node.dart';
 import '../../models/handler_model.dart';
 
@@ -29,6 +30,7 @@ class NodeDraggablePlateState extends State<NodeDraggablePlate> {
   Widget build(BuildContext context) {
     final controller = context.watch<FLowEditController>();
     final appState = context.read<AppStateController>();
+    final loc = AppLocalizations.of(context)!;
     return Positioned(
       top: n.offset.dy,
       left: n.offset.dx,
@@ -161,7 +163,7 @@ class NodeDraggablePlateState extends State<NodeDraggablePlate> {
                             n.nodeData.functions.add(
                               FunctionSchema(
                                 uuid: Uuid().v4(),
-                                description: 'Descript task for LLM for compliting this node',
+                                description: loc.descriptTaskForCompliting,
                                 handler: HandlerModel(
                                   required: [],
                                   flowResultName: 'switch_to_${n.nodeData.functions.length}',

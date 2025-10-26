@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 import '../../controllers/app_state_controller.dart';
 import '../../controllers/flow_edit_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/block_node.dart';
 import '../../models/handler_model.dart';
 import '../../models/message_model.dart';
@@ -16,8 +17,6 @@ import '../widgets/drop_down_menu.dart';
 import '../widgets/schema_plate.dart';
 import '../widgets/text_field_gpt.dart';
 import '../../models/action_model.dart' as action;
-import 'action_settings.dart';
-import 'flow_schema_settings.dart';
 
 class NodeSettings extends StatefulWidget {
   const NodeSettings({super.key, required this.node});
@@ -32,6 +31,7 @@ class NodeSettingsState extends State<NodeSettings> {
   Widget build(BuildContext context) {
     final controller = context.watch<FLowEditController>();
     final appState = context.watch<AppStateController>();
+    final loc = AppLocalizations.of(context)!;
 
     return Container(
       constraints: BoxConstraints(minWidth: 400, maxWidth: appState.leftSide),
@@ -52,9 +52,9 @@ class NodeSettingsState extends State<NodeSettings> {
                   appState.currentSchema = null;
                   controller.update();
                 },
-                child: Row(children: [Icon(Icons.arrow_back_ios_new), Text('Back'), Spacer()]),
+                child: Row(children: [Icon(Icons.arrow_back_ios_new), Text(loc.back), Spacer()]),
               ),
-              Text('Node name', style: TextStyle(color: Colors.black, fontSize: 12)),
+              Text(loc.nodeName, style: TextStyle(color: Colors.black, fontSize: 12)),
               TextFieldGpt(
                 value: widget.node.nodeData.name,
                 maxLength: 20,
@@ -62,6 +62,9 @@ class NodeSettingsState extends State<NodeSettings> {
                   widget.node.nodeData.name = value;
                   setState(() {});
                 },
+                hintText: loc.nodeName,
+                isNumber: false,
+                onlyLatin: true,
               ),
               SizedBox(height: 5),
               CheckBoxWidget(
@@ -70,10 +73,10 @@ class NodeSettingsState extends State<NodeSettings> {
                   widget.node.nodeData.respondImmediately = value ?? false;
                   controller.update();
                 },
-                title: 'Run node without waiting user action',
+                title: loc.runWithoutWaitingUserAction,
               ),
               SizedBox(height: 5),
-              Text('Context processing strategy', style: TextStyle(color: Colors.black, fontSize: 12)),
+              Text(loc.contextProcessingStrategy, style: TextStyle(color: Colors.black, fontSize: 12)),
               DropDownMenu<ContextStrategy>(
                 selectedItem: widget.node.nodeData.context_strategy,
                 items: ContextStrategy.values,
@@ -84,18 +87,18 @@ class NodeSettingsState extends State<NodeSettings> {
                 getTitle: (ContextStrategy value) {
                   switch (value) {
                     case ContextStrategy.APPEND:
-                      return 'Accumulate context';
+                      return loc.accumulateContext;
                     case ContextStrategy.RESET:
-                      return 'Reset context';
+                      return loc.resetContext;
                     case ContextStrategy.RESET_WITH_SUMMARY:
-                      return 'Use some of previos context history';
+                      return loc.useSomeHistory;
                   }
                 },
               ),
               SizedBox(height: 5),
               Row(
                 children: [
-                  Text('Action runing before run node', style: TextStyle(color: Colors.black, fontSize: 12)),
+                  Text(loc.actionRuningBeforeRuningNode, style: TextStyle(color: Colors.black, fontSize: 12)),
                   Spacer(),
                   CircleButton(
                     onTap: () {
@@ -105,7 +108,7 @@ class NodeSettingsState extends State<NodeSettings> {
                       }
                     },
                     icon: CupertinoIcons.add,
-                    tooltip: 'Add pre action',
+                    tooltip: loc.addPreAction,
                   ),
                 ],
               ),
@@ -130,15 +133,12 @@ class NodeSettingsState extends State<NodeSettings> {
               SizedBox(height: 5),
               Row(
                 children: [
-                  Text('System instruction for LLM', style: TextStyle(color: Colors.black, fontSize: 12)),
+                  Text(loc.systemInstructionForLLM, style: TextStyle(color: Colors.black, fontSize: 12)),
                   Spacer(),
                   CircleButton(
                     onTap: () {
                       if (widget.node.nodeData.roleMessage == null) {
-                        widget.node.nodeData.roleMessage = Message(
-                          role: 'system',
-                          content: 'Instruction for yuor LLM, where you set scenario of this node',
-                        );
+                        widget.node.nodeData.roleMessage = Message(role: 'system', content: loc.instructionForYourLLM);
                       } else {
                         widget.node.nodeData.roleMessage = null;
                       }
@@ -146,42 +146,43 @@ class NodeSettingsState extends State<NodeSettings> {
                     },
                     icon: widget.node.nodeData.roleMessage == null ? CupertinoIcons.add : CupertinoIcons.clear,
                     tooltip: widget.node.nodeData.roleMessage == null
-                        ? 'Add system instruction'
-                        : 'Remove system instruction',
+                        ? loc.addSystemInstruction
+                        : loc.removeSystemInstruction,
                   ),
                 ],
               ),
               if (widget.node.nodeData.roleMessage != null)
                 TextFieldGpt(
                   value: widget.node.nodeData.roleMessage!.content,
-                  maxLength: 20,
                   callBack: (String value) {
                     widget.node.nodeData.roleMessage!.content = value;
                   },
+                  hintText: loc.instructionText,
+                  isNumber: false,
+                  onlyLatin: false,
                 ),
               SizedBox(height: 5),
-              Text('Target for LLM on this stage', style: TextStyle(color: Colors.black, fontSize: 12)),
+              Text(loc.targetOnThisStage, style: TextStyle(color: Colors.black, fontSize: 12)),
               TextFieldGpt(
                 value: widget.node.nodeData.taskMessage.content,
-                maxLength: 20,
                 callBack: (String value) {
                   widget.node.nodeData.taskMessage.content = value;
                 },
+                hintText: loc.targetDescription,
+                isNumber: false,
+                onlyLatin: true,
               ),
               SizedBox(height: 5),
               Row(
                 children: [
-                  Text(
-                    'Routing scheme for switching to another nodes',
-                    style: TextStyle(color: Colors.black, fontSize: 12),
-                  ),
+                  Text(loc.routingSchemeForSwitching, style: TextStyle(color: Colors.black, fontSize: 12)),
                   Spacer(),
                   CircleButton(
                     onTap: () {
                       if (widget.node.nodeData.functions.length < 4) {
                         widget.node.nodeData.functions.add(
                           FunctionSchema(
-                            description: 'Descript task for LLM for compliting this node',
+                            description: loc.descriptTaskForCompliting,
                             handler: HandlerModel(
                               flowResultName: 'switch_to_${widget.node.nodeData.functions.length}',
                               required: [],
@@ -194,7 +195,7 @@ class NodeSettingsState extends State<NodeSettings> {
                       }
                     },
                     icon: CupertinoIcons.add,
-                    tooltip: 'Add flow',
+                    tooltip: loc.addFlow,
                   ),
                 ],
               ),
@@ -219,7 +220,10 @@ class NodeSettingsState extends State<NodeSettings> {
               SizedBox(height: 5),
               Row(
                 children: [
-                  Text('Actions before switch to another node', style: TextStyle(color: Colors.black, fontSize: 12)),
+                  Expanded(
+                    flex: 4,
+                    child: Text(loc.actionsBeforeSwitching, style: TextStyle(color: Colors.black, fontSize: 12)),
+                  ),
                   Spacer(),
                   CircleButton(
                     onTap: () {
@@ -229,7 +233,7 @@ class NodeSettingsState extends State<NodeSettings> {
                       }
                     },
                     icon: CupertinoIcons.add,
-                    tooltip: 'Add post action',
+                    tooltip: loc.addPostAction,
                   ),
                 ],
               ),

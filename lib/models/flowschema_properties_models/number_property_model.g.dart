@@ -9,8 +9,8 @@ part of 'number_property_model.dart';
 NumberPropertyModel _$NumberPropertyModelFromJson(Map<String, dynamic> json) =>
     NumberPropertyModel(
       description: json['description'] as String,
-      enums: (json['enums'] as List<dynamic>).map((e) => e as num).toList(),
-      default_value: json['default_value'] as String,
+      enums: (json['enums'] as List<dynamic>?)?.map((e) => e as num).toList(),
+      default_value: json['default_value'] as num?,
       minimun: json['minimun'] as num?,
       maximum: json['maximum'] as num?,
       exlusiveMinimum: json['exlusiveMinimum'] as num?,

@@ -9,12 +9,14 @@ part of 'string_property_model.dart';
 StringPropertyModel _$StringPropertyModelFromJson(Map<String, dynamic> json) =>
     StringPropertyModel(
       description: json['description'] as String,
-      enums: (json['enums'] as List<dynamic>).map((e) => e as String).toList(),
-      default_value: json['default_value'] as String,
+      enums: (json['enums'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      default_value: json['default_value'] as String?,
       minLength: (json['minLength'] as num?)?.toInt(),
       maxLenght: (json['maxLenght'] as num?)?.toInt(),
       pattern: json['pattern'] as String?,
-      format: json['format'] as String,
+      format: json['format'] as String?,
     );
 
 Map<String, dynamic> _$StringPropertyModelToJson(

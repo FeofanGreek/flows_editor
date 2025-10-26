@@ -1,56 +1,141 @@
 import 'package:flutter/material.dart';
 import 'package:pipecatflowseditor/ui/widgets/text_field_gpt.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter/cupertino.dart';
 import '../../controllers/app_state_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/flowschema_properties_models/string_property_model.dart';
+import 'circle_button.dart';
 
 class StringPropertyWidget extends StatefulWidget {
-  const StringPropertyWidget({super.key, required this.setProperty});
+  const StringPropertyWidget({
+    super.key,
+    required this.setProperty,
+    required this.property,
+    required this.removeProperty,
+  });
 
+  final StringPropertyModel property;
   final Function(StringPropertyModel) setProperty;
+  final Function(StringPropertyModel) removeProperty;
 
   @override
   State<StringPropertyWidget> createState() => StringPropertyWidgetState();
 }
 
 class StringPropertyWidgetState extends State<StringPropertyWidget> {
-  final property = StringPropertyModel(description: '', enums: [], default_value: '', format: '');
+  bool expanded = false;
 
   @override
   Widget build(BuildContext context) {
     final appState = context.read<AppStateController>();
+    final loc = AppLocalizations.of(context)!;
     return Container(
       constraints: BoxConstraints(minWidth: 400, maxWidth: appState.leftSide),
+      padding: EdgeInsets.all(8),
       child: Column(
+        spacing: 5,
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text('Описание для настройки для LLM'),
-          TextFieldGpt(value: property.description, callBack: (String p1) {}),
-          Text('Возможные значения из которых LLM сделает выбор (поле может быть пустым)'),
-          TextFieldGpt(value: property.enums.toString(), callBack: (String p1) {}),
-          Text('Значение по умолчанию, если выбор не может быть сделан'),
-          TextFieldGpt(value: property.default_value, callBack: (String p1) {}),
-          Text('Ограничитель длины строки (поля могут быть пустыми)'),
-          Row(
-            children: [
-              Container(
-                constraints: BoxConstraints(minWidth: 100, maxWidth: appState.leftSide / 2),
-                child: TextFieldGpt(value: property.minLength.toString(), callBack: (String p1) {}),
-              ),
-              Container(
-                constraints: BoxConstraints(minWidth: 100, maxWidth: appState.leftSide / 2),
-                child: TextFieldGpt(value: property.maxLenght.toString(), callBack: (String p1) {}),
-              ),
-            ],
-          ),
+          SizedBox(
+            //height: 30,
+            child: Row(
+              spacing: 5,
+              children: [
+                Expanded(flex: 3, child: Text('${loc.textValue}: ${widget.property.key}')),
+                Spacer(),
 
-          Text('Regex паттерн (поле может быть пустым)'),
-          TextFieldGpt(value: property.pattern ?? '', callBack: (String p1) {}),
-          Text(
-            'Форматирование полученного ответа (поле может быть пустым, но форматирование может пригодиться вам для последующей обработки)',
+                Text('Обязательный'),
+                Checkbox(value: true, onChanged: (value) {}),
+                CircleButton(
+                  onTap: () => widget.removeProperty(widget.property),
+                  icon: Icons.delete_forever,
+                  color: Colors.red,
+                  tooltip: loc.removeProperty,
+                ),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      expanded = !expanded;
+                    });
+                  },
+                  child: Icon(!expanded ? CupertinoIcons.chevron_down : CupertinoIcons.chevron_up),
+                ),
+              ],
+            ),
           ),
-          TextFieldGpt(value: property.format, callBack: (String p1) {}),
+          Divider(height: 1, thickness: 0.3, color: Colors.grey),
+          if (expanded) ...[
+            Text(loc.propertyDescriptionForLLM),
+            TextFieldGpt(
+              value: widget.property.description,
+              callBack: (String p1) {},
+              hintText: loc.description,
+              isNumber: false,
+              onlyLatin: false,
+            ),
+            Text(loc.possibleValuesForLLMChoose),
+
+            TextFieldGpt(
+              value: widget.property.enums != null ? widget.property.enums!.join(', ') : '',
+              callBack: (String p1) {},
+              hintText: loc.listValues,
+              isNumber: false,
+              onlyLatin: false,
+            ),
+            Text(loc.defaultValueIfLLMCannotMakeChoice),
+            Text('TODO тут селектор из имеющихся'),
+            TextFieldGpt(
+              value: widget.property.default_value ?? '',
+              callBack: (String p1) {},
+              hintText: 'List of values',
+              isNumber: false,
+              onlyLatin: false,
+            ),
+            Text(loc.stringLengthLimiter),
+            Row(
+              spacing: 5,
+              children: [
+                Expanded(
+                  child: TextFieldGpt(
+                    value: widget.property.minLength.toString(),
+                    callBack: (String p1) {},
+                    hintText: loc.minIntegerValue,
+                    isNumber: true,
+                    onlyLatin: false,
+                  ),
+                ),
+                Expanded(
+                  child: TextFieldGpt(
+                    value: widget.property.maxLenght.toString(),
+                    callBack: (String p1) {},
+                    hintText: loc.maxIntegerValue,
+                    isNumber: true,
+                    onlyLatin: false,
+                  ),
+                ),
+              ],
+            ),
+
+            Text(loc.regexPattern),
+            TextFieldGpt(
+              value: widget.property.pattern ?? '',
+              callBack: (String p1) {},
+              hintText: loc.pattern,
+              isNumber: false,
+              onlyLatin: true,
+            ),
+            Text(loc.formattingReceivedResponse),
+            TextFieldGpt(
+              value: widget.property.format ?? '',
+              callBack: (String p1) {},
+              hintText: loc.formatter,
+              isNumber: false,
+              onlyLatin: true,
+            ),
+          ],
         ],
       ),
     );

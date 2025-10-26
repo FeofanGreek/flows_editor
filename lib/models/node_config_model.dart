@@ -39,7 +39,7 @@ class NodeConfig {
     required this.name,
     required this.taskMessage,
     // По умолчанию LLM должна начать говорить, если есть taskMessages
-    this.respondImmediately = true,
+    this.respondImmediately = false,
   });
 
   factory NodeConfig.fromJson(Map<String, dynamic> json) => _$NodeConfigFromJson(json);

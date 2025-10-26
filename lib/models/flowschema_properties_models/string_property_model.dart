@@ -4,13 +4,15 @@ part 'string_property_model.g.dart';
 
 @JsonSerializable()
 class StringPropertyModel {
-  final String description;
-  final List<String> enums;
-  final String default_value;
-  final int? minLength;
-  final int? maxLenght;
-  final String? pattern;
-  final String format;
+  String description;
+  List<String>? enums;
+  String? default_value;
+  int? minLength;
+  int? maxLenght;
+  String? pattern;
+  String? format;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String key = '';
 
   StringPropertyModel({
     required this.description,
@@ -19,8 +21,18 @@ class StringPropertyModel {
     this.minLength,
     this.maxLenght,
     this.pattern,
-    required this.format,
+    this.format,
   });
+
+  static StringPropertyModel empty() => StringPropertyModel(
+    description: '',
+    enums: [],
+    default_value: '',
+    minLength: null,
+    maxLenght: null,
+    pattern: null,
+    format: '',
+  );
 
   factory StringPropertyModel.fromJson(Map<String, dynamic> json) => _$StringPropertyModelFromJson(json);
   Map<String, dynamic> toJson() => _$StringPropertyModelToJson(this);
