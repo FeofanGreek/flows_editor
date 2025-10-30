@@ -38,6 +38,12 @@ class NodeDraggablePlateState extends State<NodeDraggablePlate> {
         onTap: () {
           controller.setEdge(null, n.uuid);
         },
+        onLongPress: () {
+          appState.currentNodeBlock = null;
+          appState.stage = FillStages.nodeSettings;
+          appState.currentNodeBlock = n;
+          controller.update();
+        },
         onPanUpdate: (d) {
           final offset = Offset(
             d.globalPosition.dx + appState.horizontalScrollController.position.pixels - appState.leftSide,
@@ -76,7 +82,10 @@ class NodeDraggablePlateState extends State<NodeDraggablePlate> {
                 top: 17,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text('${n.offset}', style: TextStyle(fontSize: 10)),
+                  child: SizedBox(
+                    width: n.width,
+                    child: Text(n.nodeData.description, style: TextStyle(fontSize: 8)),
+                  ),
                 ),
               ),
               //FlowFunctionSchems

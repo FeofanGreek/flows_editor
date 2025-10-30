@@ -13,6 +13,9 @@ part 'node_config_model.g.dart';
 class NodeConfig {
   String name;
 
+  ///Описание этого узла (что он получает на вход и чем определяет направление выхода)
+  String description = '';
+
   String get latinName => transliterateRussian(name);
 
   /// Сообщения роли/системные инструкции (только в стартовом узле)
@@ -50,7 +53,7 @@ class NodeConfig {
       'name': name,
       'roleMessage': roleMessage?.toJson(),
       'taskMessage': taskMessage.toJson(),
-      'functions': functions.map((function) => function.toSaveJson()).toList(),
+      'functions': functions.map((function) => function.toJson()).toList(),
       'preActions': preActions.map((action) => action.toJson()),
       'postActions': postActions.map((action) => action.toJson()),
       'respondImmediately': respondImmediately,
@@ -84,7 +87,7 @@ ${functions.map((e) => e.toPython()).join('\n')}
       post_actions=${postActions.map((action) => '{"type":"${action.type.name}", "handler": ${action.handlerName != null ? "${action.handlerName}" : 'None'}, "text": "${action.text}"}').toList()},
       functions=${jsonEncode(functions.map((schema) => schema.name).toList())},
       respond_immediately= ${respondImmediately ? 'True' : 'False'},
-      context_strategy=ContextStrategyConfig(strategy=${context_strategy}),
+      context_strategy=ContextStrategyConfig(strategy=$context_strategy),
     )
 ''';
   }

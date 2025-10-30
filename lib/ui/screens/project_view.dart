@@ -43,6 +43,7 @@ class ProjectViewState extends State<ProjectView> {
         height: MediaQuery.of(context).size.height,
         child: Stack(
           children: [
+            Positioned(left: appState.leftSide, child: NetworkLineRouter()),
             switch (appState.stage) {
               FillStages.projectSettings => ProjectSettings(),
               FillStages.nodeSettings => NodeSettings(node: appState.currentNodeBlock!),
@@ -56,7 +57,7 @@ class ProjectViewState extends State<ProjectView> {
               ),
               FillStages.flowSchemaSettings => FlowSchemaSettings(selectedSchema: appState.currentSchema!),
             },
-            Positioned(left: appState.leftSide, child: NetworkLineRouter()),
+
             Positioned(
               left: appState.leftSide - 5,
               top: MediaQuery.of(context).size.height / 2 - 25,

@@ -104,8 +104,20 @@ class NetworkLineRouterState extends State<NetworkLineRouter> {
                     ),
                     ...controller.edges.map(
                       (node) => EdgeEraser(
-                        start: node.$1 - Offset(appState.leftSide, 0),
-                        end: node.$2 - Offset(appState.leftSide, 0),
+                        start:
+                            node.$1 -
+                            Offset(appState.leftSide, 0) +
+                            Offset(
+                              appState.horizontalScrollController.position.pixels,
+                              appState.verticalScrollController.position.pixels,
+                            ),
+                        end:
+                            node.$2 -
+                            Offset(appState.leftSide, 0) +
+                            Offset(
+                              appState.horizontalScrollController.position.pixels,
+                              appState.verticalScrollController.position.pixels,
+                            ),
                         onChanged: () {
                           final filteredNode = controller.nodes.firstWhere((e) => e.uuid == node.$4);
                           final filteredHandler = filteredNode.nodeData.functions.firstWhere(

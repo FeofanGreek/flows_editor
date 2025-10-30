@@ -34,7 +34,17 @@ class ProjectSettingsState extends State<ProjectSettings> {
             Row(
               spacing: 5,
               children: [
-                CircleButton(onTap: () {}, icon: Icons.file_open, tooltip: loc.openSavedProject),
+                CircleButton(
+                  onTap: () async {
+                    final pr = await appState.loadProject(context);
+                    if (pr != null) {
+                      controller.flowModel = pr;
+                      controller.update();
+                    }
+                  },
+                  icon: Icons.file_open,
+                  tooltip: loc.openSavedProject,
+                ),
                 CircleButton(
                   onTap: () {
                     appState.saveProject(controller.flowModel);
@@ -44,6 +54,13 @@ class ProjectSettingsState extends State<ProjectSettings> {
                 ),
                 CircleButton(onTap: () {}, icon: Icons.import_contacts, tooltip: loc.exportToPython),
                 CircleButton(onTap: () {}, icon: Icons.explicit, tooltip: loc.importFromPython),
+                CircleButton(
+                  onTap: () {
+                    print(controller.flowModel.toPrompt());
+                  },
+                  icon: Icons.schema_outlined,
+                  tooltip: 'Построить с АИ',
+                ),
               ],
             ),
             Text(loc.shortProjectName, style: TextStyle(color: Colors.black, fontSize: 12)),
@@ -69,7 +86,8 @@ class ProjectSettingsState extends State<ProjectSettings> {
               onlyLatin: false,
             ),
 
-            Divider(height: 15, thickness: 0.5, color: Colors.grey),
+            //Divider(height: 1, thickness: 0.5, color: Colors.grey),
+            //SizedBox(height: 10),
             Row(
               spacing: 5,
               children: [
@@ -86,10 +104,23 @@ class ProjectSettingsState extends State<ProjectSettings> {
               ],
             ),
             Expanded(
-              child: ListView.builder(
+              child: ReorderableListView(
                 shrinkWrap: true,
-                itemCount: controller.flowModel.nodes.length,
-                itemBuilder: (contxt, index) => ListNodesPlate(node: controller.flowModel.nodes[index], index: index),
+                //itemCount: controller.flowModel.nodes.length,
+                //itemBuilder: (contxt, index) => ListNodesPlate(node: controller.flowModel.nodes[index], index: index),
+                onReorder: (int oldIndex, int newIndex) {
+                  setState(() {
+                    if (oldIndex < newIndex) {
+                      newIndex -= 1;
+                    }
+                    final item = controller.flowModel.nodes.removeAt(oldIndex);
+                    controller.flowModel.nodes.insert(newIndex, item);
+                  });
+                },
+                children: List.generate(
+                  controller.flowModel.nodes.length,
+                  (index) => ListNodesPlate(key: Key('$index'), node: controller.flowModel.nodes[index], index: index),
+                ),
               ),
             ),
           ],

@@ -31,9 +31,8 @@ void printPythonCode() {
   node.functions = [
     FunctionSchema(
       description: 'проверка дескриптинга схемы',
-      required: ["estew", "erwwet"],
+
       handler: HandlerModel(
-        description: 'проверка дескриптинга хэндлера схемы',
         flowResultName: 'check_descriptor',
         properties: {
           "size": {
@@ -47,6 +46,7 @@ void printPythonCode() {
             "description": "Type of pizza",
           },
         },
+        required: [],
       ),
       uuid: Uuid().v4(),
     ),
@@ -72,7 +72,7 @@ ${flow.nodes.map((node) => node.nodeData.toPython()).join('\n\n')}
 
 async def router(arg: dict, from: str) -> tuple[dict, NodeConfig]:
     match from:
-${flow.nodes.map((node) => node.nodeData.functions.map((func) => '      case "${func.handler.name}":\n      #настройте математику \n${func.handler.router.toPython()}').join('')).join('')}
+${flow.nodes.map((node) => node.nodeData.functions.map((func) => '      case "${func.handler.name}":\n      #настройте математику \n${func.handler}').join('')).join('')}
       case _: 
           return ${node.functions.first.handler.name}()
   ''';

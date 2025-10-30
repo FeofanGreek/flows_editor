@@ -14,6 +14,7 @@ NodeConfig _$NodeConfigFromJson(Map<String, dynamic> json) =>
         ),
         respondImmediately: json['respondImmediately'] as bool? ?? false,
       )
+      ..description = json['description'] as String
       ..roleMessage = json['roleMessage'] == null
           ? null
           : Message.fromJson(json['roleMessage'] as Map<String, dynamic>)
@@ -34,6 +35,7 @@ NodeConfig _$NodeConfigFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$NodeConfigToJson(NodeConfig instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'description': instance.description,
       'roleMessage': instance.roleMessage,
       'taskMessage': instance.taskMessage,
       'functions': instance.functions,

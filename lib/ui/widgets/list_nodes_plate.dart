@@ -41,14 +41,6 @@ class ListNodesPlate extends StatelessWidget {
             Text(node.nodeData.name != '' ? node.nodeData.name : 'Нет названия', style: TextStyle(fontSize: 12)),
             Spacer(),
             CircleButton(
-              onTap: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => NodeSettings(node: node)))
-                  .whenComplete(() => controller.update()),
-              icon: Icons.edit,
-              color: Colors.orange,
-              tooltip: 'Редактировать узел',
-            ),
-            CircleButton(
               onTap: () {
                 controller.removeNode(index);
               },
@@ -56,7 +48,17 @@ class ListNodesPlate extends StatelessWidget {
               color: Colors.red,
               tooltip: 'Удалить узел',
             ),
-            Icon(CupertinoIcons.chevron_forward),
+            CircleButton(
+              onTap: () {
+                appState.stage = FillStages.nodeSettings;
+                appState.currentNodeBlock = node;
+                controller.update();
+              },
+              icon: Icons.edit,
+              color: Colors.orange,
+              tooltip: 'Редактировать узел',
+            ),
+            SizedBox(width: 30),
           ],
         ),
       ),

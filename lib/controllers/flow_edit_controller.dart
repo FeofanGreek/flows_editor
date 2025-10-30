@@ -169,7 +169,13 @@ class FLowEditController with ChangeNotifier {
     );
 
     final freePosition = findFreePosition(newNode, this);
-
+    newNode.nodeData.functions.add(
+      FunctionSchema(
+        description: loc.descriptTaskForCompliting,
+        handler: HandlerModel(flowResultName: 'switch_to_0', required: [], properties: {}),
+        uuid: Uuid().v4(),
+      ),
+    );
     if (freePosition != null) {
       newNode.offset = freePosition;
       nodes.add(newNode);
@@ -204,12 +210,12 @@ class FLowEditController with ChangeNotifier {
       for (final node in nodes) {
         for (final schema in node.nodeData.functions) {
           if (schema.uuid == _uuidInProgress) setupSchema = schema;
-          if (setupSchema != null) {
-            print('добавили связку');
-            setupSchema.handler.nextNodeUuid.add(uuidInput);
-            _uuidInProgress = null;
-          }
         }
+      }
+      if (setupSchema != null) {
+        print('добавили связку');
+        setupSchema.handler.nextNodeUuid.add(uuidInput);
+        _uuidInProgress = null;
       }
     }
 
