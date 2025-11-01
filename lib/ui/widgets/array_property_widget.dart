@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pipecatflowseditor/ui/widgets/text_field_gpt.dart';
+import '../../ui/widgets/text_field_gpt.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/flowschema_properties_models/array_property_model.dart';
-import '../../models/flowschema_properties_models/number_property_model.dart';
 
 class ArrayPropertyWidget extends StatefulWidget {
   const ArrayPropertyWidget({super.key, required this.setProperty});

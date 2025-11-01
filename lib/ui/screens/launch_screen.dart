@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pipecatflowseditor/ui/screens/project_view.dart';
-import 'package:pipecatflowseditor/ui/screens/readme_page.dart';
-import 'package:pipecatflowseditor/ui/widgets/elevated_round_button.dart';
+import '../../ui/screens/project_view.dart';
+import '../../ui/screens/readme_page.dart';
+import '../../ui/widgets/elevated_round_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/app_state_controller.dart';

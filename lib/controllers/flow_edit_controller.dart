@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pipecatflowseditor/utils/list_extension.dart';
+import '../utils/list_extension.dart';
 import 'package:uuid/uuid.dart';
 
 import '../l10n/app_localizations.dart';

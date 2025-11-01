@@ -210,4 +210,31 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get valueMustMultipleSpecifiedNumber =>
       'Значение должно быть кратно указанному числу (e.g. `0.5`) (Поле можно оставить пустым)';
+
+  @override
+  String get nodeDescription => 'Описание узла';
+
+  @override
+  String get extendedSettings => 'Расширенные настройки';
+
+  @override
+  String get parameterName => 'Имя параметра';
+
+  @override
+  String get fillParameterName => 'Заполните имя параметра';
+
+  @override
+  String get cancel => 'Отмена';
+
+  @override
+  String get accept => 'Применить';
+
+  @override
+  String get removeNode => 'Удалить узел';
+
+  @override
+  String get editNode => 'Редактировать узел';
+
+  @override
+  String get isRequired => 'Обязательный';
 }

@@ -61,5 +61,14 @@
   "formatter" : "Formatter",
   "minimumAndMaximumAllowedValues":"Minimum and maximum allowed values (inclusive). (This field may be empty.)",
   "valueMustStrictlyGreaterLessSpecifiedValue":"The value must be strictly greater than or less than the specified value. (The field may be empty.)",
-  "valueMustMultipleSpecifiedNumber":"The value must be a multiple of the specified number (e.g. `0.5`) (the field may be empty)"
+  "valueMustMultipleSpecifiedNumber":"The value must be a multiple of the specified number (e.g. `0.5`) (the field may be empty)",
+  "nodeDescription" : "Node description",
+  "extendedSettings" : "Extended settings",
+  "parameterName" : "Parmeter name",
+  "fillParameterName" : "Fill parameter name",
+  "cancel" : "Cancel",
+  "accept" : "Accept",
+  "removeNode" : "Remove node",
+  "editNode" : "Change node",
+  "isRequired" : "Required"
 }

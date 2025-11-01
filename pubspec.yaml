@@ -1,4 +1,4 @@
-name: pipecatflowseditor
+name: PipeCatFlowEditor
 description: "Утилита для визуального отображения и редактирования диалогов PipeCat Flows"
 publish_to: 'none'
 
@@ -26,6 +26,7 @@ dependencies:
   json_annotation: ^4.9.0
   uuid: ^4.5.1
   file_picker: ^10.3.3
+  window_manager: ^0.5.1
 
 
 

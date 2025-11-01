@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pipecatflowseditor/ui/widgets/text_field_gpt.dart';
+import '../../ui/widgets/text_field_gpt.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import '../../controllers/app_state_controller.dart';
@@ -47,7 +47,7 @@ class StringPropertyWidgetState extends State<StringPropertyWidget> {
                 Expanded(flex: 3, child: Text('${loc.textValue}: ${widget.property.key}')),
                 Spacer(),
 
-                Text('Обязательный'),
+                Text(loc.isRequired),
                 Checkbox(value: true, onChanged: (value) {}),
                 CircleButton(
                   onTap: () => widget.removeProperty(widget.property),

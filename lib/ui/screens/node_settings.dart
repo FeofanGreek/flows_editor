@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pipecatflowseditor/models/flow_function_schema.dart';
+import '../../models/flow_function_schema.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
@@ -69,21 +69,21 @@ class NodeSettingsState extends State<NodeSettings> {
                 onlyLatin: false,
               ),
               SizedBox(height: 5),
-              Text('Описание узла', style: TextStyle(color: Colors.black, fontSize: 12)),
+              Text(loc.nodeDescription, style: TextStyle(color: Colors.black, fontSize: 12)),
               TextFieldGpt(
                 value: widget.node.nodeData.description,
                 callBack: (String value) {
                   widget.node.nodeData.description = value;
                   setState(() {});
                 },
-                hintText: 'Описание узла',
+                hintText: loc.nodeDescription,
                 isNumber: false,
                 onlyLatin: false,
               ),
               SizedBox(height: 5),
               Row(
                 children: [
-                  Text('Расширенные настройки'),
+                  Text(loc.extendedSettings),
                   Expanded(child: Divider(height: 1, thickness: 0.3, color: Colors.black, endIndent: 10, indent: 10)),
                   InkWell(
                     onTap: () {

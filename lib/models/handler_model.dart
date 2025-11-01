@@ -1,4 +1,4 @@
-import 'package:pipecatflowseditor/utils/string_extention.dart';
+import '../../utils/string_extention.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/enums_lib.dart';

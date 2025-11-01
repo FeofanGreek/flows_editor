@@ -206,4 +206,31 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get valueMustMultipleSpecifiedNumber =>
       'The value must be a multiple of the specified number (e.g. `0.5`) (the field may be empty)';
+
+  @override
+  String get nodeDescription => 'Node description';
+
+  @override
+  String get extendedSettings => 'Extended settings';
+
+  @override
+  String get parameterName => 'Parmeter name';
+
+  @override
+  String get fillParameterName => 'Fill parameter name';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get removeNode => 'Remove node';
+
+  @override
+  String get editNode => 'Change node';
+
+  @override
+  String get isRequired => 'Required';
 }

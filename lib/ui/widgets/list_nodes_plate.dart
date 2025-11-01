@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/app_state_controller.dart';
 import '../../controllers/flow_edit_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/block_node.dart';
-import '../screens/node_settings.dart';
 import 'circle_button.dart';
 
 class ListNodesPlate extends StatelessWidget {
@@ -18,6 +17,7 @@ class ListNodesPlate extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<FLowEditController>();
     final appState = context.watch<AppStateController>();
+    final loc = AppLocalizations.of(context)!;
     return GestureDetector(
       // onTap: () => Navigator.of(
       //   context,
@@ -46,7 +46,7 @@ class ListNodesPlate extends StatelessWidget {
               },
               icon: Icons.delete_forever,
               color: Colors.red,
-              tooltip: 'Удалить узел',
+              tooltip: loc.removeNode,
             ),
             CircleButton(
               onTap: () {
@@ -56,7 +56,7 @@ class ListNodesPlate extends StatelessWidget {
               },
               icon: Icons.edit,
               color: Colors.orange,
-              tooltip: 'Редактировать узел',
+              tooltip: loc.editNode,
             ),
             SizedBox(width: 30),
           ],

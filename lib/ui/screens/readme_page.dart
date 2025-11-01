@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:markdown_widget/widget/markdown.dart';
-import 'package:pipecatflowseditor/ui/screens/project_view.dart';
-import 'package:pipecatflowseditor/ui/widgets/elevated_round_button.dart';
-import 'package:provider/provider.dart';
-
-import '../../controllers/flow_edit_controller.dart';
 import '../../l10n/app_localizations.dart';
-import '../widgets/text_field_gpt.dart';
 
 class ReadmePage extends StatefulWidget {
   const ReadmePage({super.key});

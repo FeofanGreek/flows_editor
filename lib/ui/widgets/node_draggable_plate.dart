@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pipecatflowseditor/models/flow_function_schema.dart';
+import '../../models/flow_function_schema.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 

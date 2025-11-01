@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pipecatflowseditor/ui/widgets/text_field_gpt.dart';
+import '../../ui/widgets/text_field_gpt.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/flowschema_properties_models/array_property_model.dart';
@@ -72,14 +72,14 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                           });
                         }
                       },
-                      hintText: 'Имя параметра',
+                      hintText: loc.parameterName,
                       isNumber: false,
                       onlyLatin: true,
                     ),
                     if (keyNotFilled)
                       Text(loc.propertyDescriptionForLLM, style: TextStyle(fontSize: 12, color: Colors.red)),
                     //Общие для всех параметры
-                    Text('Заполните имя параметра'),
+                    Text(loc.fillParameterName),
                     TextFieldGpt(
                       value: property.description,
                       callBack: (String p1) {
@@ -329,13 +329,13 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text('Отмена'),
+            child: Text(loc.cancel),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: const Text('Применить'),
+            child: Text(loc.accept),
             onPressed: () {
               if (property.key != null) {
                 result = property.toJson();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:pipecatflowseditor/ui/screens/project_settings.dart';
+import '../../ui/screens/project_settings.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/app_state_controller.dart';
 import '../../controllers/flow_edit_controller.dart';

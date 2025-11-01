@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../models/action_model.dart' as action;
 import '../models/block_node.dart';
 import '../models/flow_function_schema.dart';
 import '../models/flow_model.dart';
-import '../utils/print_python_code.dart';
 
 class AppStateController with ChangeNotifier {
   final GlobalKey interactiveViewerKey = GlobalKey();
@@ -24,6 +21,9 @@ class AppStateController with ChangeNotifier {
   NodeBloc? currentNodeBlock;
 
   double leftSide = 400;
+
+  //Отображать или нет много полей ввода в настройках проекта. Для генерации промпта, который можно отправить в любой ГПТ и сделать пайтон код, достаточно выключенного расширенного режима
+  bool extendedMode = false;
 
   Future<FlowModel?> loadProject(BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(

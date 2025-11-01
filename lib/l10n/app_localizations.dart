@@ -469,6 +469,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The value must be a multiple of the specified number (e.g. `0.5`) (the field may be empty)'**
   String get valueMustMultipleSpecifiedNumber;
+
+  /// No description provided for @nodeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Node description'**
+  String get nodeDescription;
+
+  /// No description provided for @extendedSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Extended settings'**
+  String get extendedSettings;
+
+  /// No description provided for @parameterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Parmeter name'**
+  String get parameterName;
+
+  /// No description provided for @fillParameterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill parameter name'**
+  String get fillParameterName;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @removeNode.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove node'**
+  String get removeNode;
+
+  /// No description provided for @editNode.
+  ///
+  /// In en, this message translates to:
+  /// **'Change node'**
+  String get editNode;
+
+  /// No description provided for @isRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get isRequired;
 }
 
 class _AppLocalizationsDelegate

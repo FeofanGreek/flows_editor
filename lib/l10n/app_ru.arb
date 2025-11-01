@@ -61,5 +61,14 @@
   "formatter" : "Шаблон",
   "minimumAndMaximumAllowedValues":"Минимальное и максимальное допустимое значение (включительно). (Поле можно оставить пустым)",
   "valueMustStrictlyGreaterLessSpecifiedValue":"Значение должно быть строго меньше или больше чем указанное (Поле можно оставить пустым)",
-  "valueMustMultipleSpecifiedNumber":"Значение должно быть кратно указанному числу (e.g. `0.5`) (Поле можно оставить пустым)"
+  "valueMustMultipleSpecifiedNumber":"Значение должно быть кратно указанному числу (e.g. `0.5`) (Поле можно оставить пустым)",
+  "nodeDescription" : "Описание узла",
+  "extendedSettings" : "Расширенные настройки",
+  "parameterName" : "Имя параметра",
+  "fillParameterName" : "Заполните имя параметра",
+  "cancel" : "Отмена",
+  "accept" : "Применить",
+  "removeNode" : "Удалить узел",
+  "editNode" : "Редактировать узел",
+  "isRequired" : "Обязательный"
 }
