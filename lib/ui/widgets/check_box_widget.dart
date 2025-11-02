@@ -14,10 +14,12 @@ class CheckBoxWidgetState extends State<CheckBoxWidget> {
   @override
   Widget build(BuildContext context) {
     return CheckboxListTile(
+      contentPadding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
         side: const BorderSide(color: Colors.black, width: 0.3),
       ),
+      side: const BorderSide(color: Colors.black, width: 0.3),
       title: Text(widget.title, style: TextStyle(color: Colors.black, fontSize: 12)),
       value: widget.currentValue,
       onChanged: widget.onChanged,

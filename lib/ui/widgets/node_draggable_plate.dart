@@ -106,22 +106,19 @@ class NodeDraggablePlateState extends State<NodeDraggablePlate> {
                         backgroundColor: Colors.transparent,
                         smallSize: 12,
                         largeSize: 12,
-                        alignment: const Alignment(1, -1.25),
+                        alignment: const Alignment(-0.2, -1.25),
                         padding: EdgeInsets.zero,
-                        label: n.nodeData.functions.length > 1
-                            ? InkWell(
-                                onTap: () {
-                                  if (n.nodeData.functions.length > 1) {
-                                    n.nodeData.functions.removeWhere((e) => e == h);
-                                    controller.update();
-                                  }
-                                },
-                                child: Container(
-                                  decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
-                                  child: const Icon(Icons.remove, color: Colors.white, size: 12),
+                        label: h.handler.nextNodeUuid.isNotEmpty
+                            ? Container(
+                                padding: EdgeInsets.all(3),
+                                decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
+                                child: Text(
+                                  '${h.handler.nextNodeUuid.length}',
+                                  style: TextStyle(fontSize: 8, color: Colors.black),
                                 ),
                               )
-                            : SizedBox.shrink(),
+                            : SizedBox(),
+
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.transparent,
@@ -179,7 +176,7 @@ class NodeDraggablePlateState extends State<NodeDraggablePlate> {
                                 description: loc.descriptTaskForCompliting,
                                 handler: HandlerModel(
                                   required: [],
-                                  flowResultName: 'switch_to_${n.nodeData.functions.length}',
+                                  flowResultName: '${n.nodeData.latinName}_${n.nodeData.functions.length}_handler',
                                   properties: {},
                                 ),
                               ),

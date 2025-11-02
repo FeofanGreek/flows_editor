@@ -186,15 +186,15 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                                 switch (property.items['type']) {
                                   case 'integer':
                                     {
-                                      property.enums = p1.split(',').map((e) => num.parse(e)).toList();
+                                      property.items['enum'] = p1.split(',').map((e) => num.parse(e)).toList();
                                     }
                                   case 'number':
                                     {
-                                      property.enums = p1.split(',').map((e) => num.parse(e)).toList();
+                                      property.items['enum'] = p1.split(',').map((e) => num.parse(e)).toList();
                                     }
                                   case 'string':
                                     {
-                                      property.enums = p1.split(',').map((e) => e).toList();
+                                      property.items['enum'] = p1.split(',').map((e) => e).toList();
                                     }
                                 }
                               },

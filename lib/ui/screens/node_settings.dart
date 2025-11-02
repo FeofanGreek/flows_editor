@@ -54,7 +54,7 @@ class NodeSettingsState extends State<NodeSettings> {
                   appState.currentSchema = null;
                   controller.update();
                 },
-                child: Row(children: [Icon(Icons.arrow_back_ios_new), Text(loc.back), Spacer()]),
+                child: Row(children: [Icon(Icons.arrow_back_ios_new), Text(loc.back), Spacer(), Text('NodeConfig')]),
               ),
               Text(loc.nodeName, style: TextStyle(color: Colors.black, fontSize: 12)),
               TextFieldGpt(
@@ -85,14 +85,6 @@ class NodeSettingsState extends State<NodeSettings> {
                 children: [
                   Text('${loc.extendedSettings}: ${appState.extendedMode ? 'on' : 'off'}'),
                   Expanded(child: Divider(height: 1, thickness: 0.3, color: Colors.black, endIndent: 10, indent: 10)),
-                  // InkWell(
-                  //   onTap: () {
-                  //     setState(() {
-                  //       extendedSettings = !extendedSettings;
-                  //     });
-                  //   },
-                  //   child: Icon(!extendedSettings ? CupertinoIcons.chevron_down : CupertinoIcons.chevron_up),
-                  // ),
                   Switch(
                     value: appState.extendedMode,
                     onChanged: (value) {
@@ -224,7 +216,8 @@ class NodeSettingsState extends State<NodeSettings> {
                             FunctionSchema(
                               description: loc.descriptTaskForCompliting,
                               handler: HandlerModel(
-                                flowResultName: 'switch_to_${widget.node.nodeData.functions.length}',
+                                flowResultName:
+                                    '${widget.node.nodeData.latinName}_${widget.node.nodeData.functions.length}_handler',
                                 required: [],
                                 properties: {},
                               ),

@@ -65,7 +65,13 @@ class ProjectSettingsState extends State<ProjectSettings> {
                   icon: Icons.save,
                   tooltip: loc.saveProject,
                 ),
-                CircleButton(onTap: () {}, icon: Icons.import_contacts, tooltip: loc.exportToPython),
+                CircleButton(
+                  onTap: () {
+                    print(controller.flowModel.toPython());
+                  },
+                  icon: Icons.import_contacts,
+                  tooltip: loc.exportToPython,
+                ),
                 //CircleButton(onTap: () {}, icon: Icons.explicit, tooltip: loc.importFromPython),
                 CircleButton(
                   onTap: () {

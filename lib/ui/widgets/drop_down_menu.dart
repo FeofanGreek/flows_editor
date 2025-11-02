@@ -38,8 +38,8 @@ class DropDownMenuState<T> extends State<DropDownMenu<T>> {
           items: widget.items.map((T mode) {
             return DropdownMenuItem<T>(
               value: mode,
-              child: SizedBox(
-                //width: 300,
+              child: Container(
+                constraints: BoxConstraints(maxWidth: 400),
                 child: Text(
                   widget.getTitle(mode),
                   overflow: TextOverflow.ellipsis,
@@ -51,8 +51,8 @@ class DropDownMenuState<T> extends State<DropDownMenu<T>> {
           selectedItemBuilder: (context) => widget.items.map((T mode) {
             return DropdownMenuItem<T>(
               value: mode,
-              child: SizedBox(
-                //width: 300,
+              child: Container(
+                constraints: BoxConstraints(maxWidth: 400),
                 child: Text(widget.getTitle(mode), overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12)),
               ),
             );

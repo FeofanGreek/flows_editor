@@ -453,4 +453,108 @@ def create_end_node() -> NodeConfig:
     }
     ''';
   }
+
+  String toPython() {
+    return '''
+#перечисляем в коде импорты
+from loguru import logger
+from pipecat_flows import (
+    FlowArgs,
+    FlowManager,
+    FlowsFunctionSchema,
+    NodeConfig,
+)
+
+#section with FlowResult classes
+${nodes.map((node) {
+      return '''${node.nodeData.functions.map((schema) {
+        return '''
+class ${schema.handler.flowResultName}Result(FlowResult):
+    ${schema.handler.properties.entries.map((prop) => '${prop.key}: ${prop.value["type"]}').toList().join('\n')}
+    ${schema.handler.addonProperties.map((addon) => '${addon.name}: ${addon.type.python}').toList().join('\n')}
+''';
+      }).toList().join('')}
+''';
+    }).toList().join('')}  
+#section with Actions (pre and post)
+${nodes.map((node) {
+      return '''
+${node.nodeData.preActions.map((pre) {
+        return '''
+async def ${pre.handlerName} (action: dict, flow_manager: FlowManager) -> None:
+    """Check if kitchen is open and log status."""
+    logger.info("Checking kitchen status") 
+''';
+      }).toList().join('')}     
+      
+${node.nodeData.postActions.map((post) {
+        return '''
+async def ${post.handlerName} (action: dict, flow_manager: FlowManager) -> None:
+    """Check if kitchen is open and log status."""
+    logger.info("Checking kitchen status") 
+''';
+      }).toList().join('')}       
+''';
+    }).toList().join('')}
+#section with handlers
+${nodes.map((node) {
+      return '''${node.nodeData.functions.map((schema) {
+        return '''
+async def ${schema.handler.latinName}(args: FlowArgs, flow_manager: FlowManager) -> tuple[None, NodeConfig]:
+    """Разобрать входные параметры, нод резалт классы и определитель выходного нода"""
+    ${schema.handler.properties.entries.map((prop) => '${prop.key} = args["${prop.key}"]').toList().join('\n')}
+    ${schema.handler.addonProperties.map((addon) => '${addon.name} = args["${addon.name}"]').toList().join('\n')}
+    result = ДОБАВИТЬ МАТЕМАТИКУ
+    
+    flowResult = ${schema.handler.flowResultName}Result(ДОБАВИТЬ ОПРЕДЕЛИТЕЛЬПАРАМЕТРОВ)
+    
+    nextNode = ФУНКЦИЯ ПО РЕЗУЛЬТАТМ ОБРАБОТКИ
+    
+    return flowResult, nextNode
+''';
+      }).toList().join('')}
+''';
+    }).toList().join('')}        
+#sections with FlowsFunctionSchema
+${nodes.map((node) {
+      return '''${node.nodeData.functions.map((schema) {
+        return '''
+${schema.name} = FlowsFunctionSchema(
+        name="${schema.handler.latinName}",
+        handler=${schema.handler.latinName},
+        description="${schema.description}",
+        properties=${jsonEncode(schema.handler.properties)},
+        required=${jsonEncode(schema.handler.required)},
+    )
+''';
+      }).toList().join('')}  
+''';
+    }).toList().join('')}
+
+#section with NodeConfig
+${nodes.map((node) {
+      return '''def ${node.nodeData.latinName.replaceAll(' ', '_')}_node() -> NodeConfig:
+    """${node.nodeData.description}"""
+    return NodeConfig(
+        name="${node.nodeData.latinName.replaceAll(' ', '_')}",
+        pre_actions=${node.nodeData.preActions.map((pre) => pre.type == ActionTypes.tts_say
+          ? {"type": "tts_say", "text": pre.text ?? ''}
+          : pre.type == ActionTypes.end_conversation
+          ? {"type": "end_conversation", "text": pre.text ?? ''}
+          : '{"type": "function", "handler": ${pre.handlerName!.replaceAll(' ', '_')}}').toList()},
+        role_messages=${jsonEncode(node.nodeData.roleMessage ?? [])},
+        task_messages=${jsonEncode(node.nodeData.taskMessage)},
+        functions=${node.nodeData.functions.map((func) => func.name).toList()},
+        context_strategy=ContextStrategyConfig(strategy=ContextStrategy.${node.nodeData.context_strategy.name}),
+        post_actions=${node.nodeData.postActions.map((post) => post.type == ActionTypes.tts_say
+          ? {"type": "tts_say", "text": post.text ?? ''}
+          : post.type == ActionTypes.end_conversation
+          ? {"type": "end_conversation", "text": post.text ?? ''}
+          : '{"type": "function", "handler": ${post.handlerName!.replaceAll(' ', '_')}}').toList()},
+        respond_immediately=${node.nodeData.respondImmediately ? 'True' : 'False'}
+    )  
+''';
+    }).toList().join('')}   
+''';
+  }
 }

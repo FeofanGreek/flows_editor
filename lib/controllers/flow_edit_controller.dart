@@ -172,7 +172,7 @@ class FLowEditController with ChangeNotifier {
     newNode.nodeData.functions.add(
       FunctionSchema(
         description: loc.descriptTaskForCompliting,
-        handler: HandlerModel(flowResultName: 'switch_to_0', required: [], properties: {}),
+        handler: HandlerModel(flowResultName: '${newNode.nodeData.latinName}_0_handler', required: [], properties: {}),
         uuid: Uuid().v4(),
       ),
     );

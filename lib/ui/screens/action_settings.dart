@@ -68,17 +68,20 @@ async def ${widget.selectedAction.handlerName}(action: dict, flow_manager: FlowM
                 appState.currentAction = null;
                 controller.update();
               },
-              child: Row(children: [Icon(Icons.arrow_back_ios_new), Text(loc.back), Spacer()]),
+              child: Row(children: [Icon(Icons.arrow_back_ios_new), Text(loc.back), Spacer(), Text('Action')]),
             ),
             Text(loc.selectActionType, style: TextStyle(color: Colors.black, fontSize: 12)),
-            DropDownMenu<ActionTypes>(
-              selectedItem: widget.selectedAction.type,
-              items: ActionTypes.values,
-              onChanged: (ActionTypes? value) {
-                widget.selectedAction.type = value!;
-                setState(() {});
-              },
-              getTitle: (ActionTypes value) => value.description,
+            SizedBox(
+              width: appState.leftSide,
+              child: DropDownMenu<ActionTypes>(
+                selectedItem: widget.selectedAction.type,
+                items: ActionTypes.values,
+                onChanged: (ActionTypes? value) {
+                  widget.selectedAction.type = value!;
+                  setState(() {});
+                },
+                getTitle: (ActionTypes value) => value.description,
+              ),
             ),
             //widget.selectedAction.text
             switch (widget.selectedAction.type) {

@@ -34,35 +34,4 @@ class FunctionSchema {
     )
 ''';
   }
-
-  ///гнерерируем код роутера - преключателя на нужный нод
-  String returnManyNodesLogic() {
-    print('ТУТ Логическая ошибка ПЕРЕДЕЛАТЬ');
-    final buffer = StringBuffer();
-    // for (int i = 0; i < nodes.length; i++) {
-    //   for (int ii = 0; ii < nodes[i].functions.length; ii++) {
-    //     for (int iii = 0; iii < nodes[i].functions[ii].handler.nextNodeUuid.length; iii++) {
-    //       String prefix;
-    //       if (iii == 0) {
-    //         prefix = '        if';
-    //       } else if (iii == nodes[i].functions[ii].handler.nextNodeUuid.length - 1) {
-    //         prefix = '        else';
-    //       } else {
-    //         prefix = '        elif';
-    //       }
-    //       buffer.write(prefix);
-    //       buffer.write(' #настройте_условие:\n');
-    //       //TODO найти аргументы
-    //       buffer.write('          return (arg, ${nodes[i].functions[ii].handler.nextNodeUuid[iii]}())\n');
-    //     }
-    //   }
-    // }
-    return buffer.toString();
-  }
-
-  String toRouterPython() {
-    return '''
-${returnManyNodesLogic()}    
-''';
-  }
 }
