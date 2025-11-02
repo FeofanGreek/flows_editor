@@ -19,9 +19,6 @@ class ListNodesPlate extends StatelessWidget {
     final appState = context.watch<AppStateController>();
     final loc = AppLocalizations.of(context)!;
     return GestureDetector(
-      // onTap: () => Navigator.of(
-      //   context,
-      // ).push(MaterialPageRoute(builder: (_) => NodeSettings(node: node))).whenComplete(() => controller.update()),
       onTap: () {
         appState.stage = FillStages.nodeSettings;
         appState.currentNodeBlock = node;

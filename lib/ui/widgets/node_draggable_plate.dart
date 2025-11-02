@@ -59,7 +59,10 @@ class NodeDraggablePlateState extends State<NodeDraggablePlate> {
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Colors.grey, width: 0.3),
+            border: Border.all(
+              color: appState.currentNodeBlock == n ? Colors.orange : Colors.grey,
+              width: appState.currentNodeBlock == n ? 2.0 : 0.3,
+            ),
             borderRadius: const BorderRadius.all(Radius.circular(4)),
           ),
           width: n.width,
@@ -84,6 +87,7 @@ class NodeDraggablePlateState extends State<NodeDraggablePlate> {
                   padding: EdgeInsets.symmetric(horizontal: 5),
                   child: SizedBox(
                     width: n.width,
+                    height: 35,
                     child: Text(n.nodeData.description, style: TextStyle(fontSize: 8)),
                   ),
                 ),

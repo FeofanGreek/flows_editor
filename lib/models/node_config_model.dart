@@ -48,19 +48,6 @@ class NodeConfig {
   factory NodeConfig.fromJson(Map<String, dynamic> json) => _$NodeConfigFromJson(json);
   Map<String, dynamic> toJson() => _$NodeConfigToJson(this);
 
-  Map<String, dynamic> toSaveJson() {
-    return {
-      'name': name,
-      'roleMessage': roleMessage?.toJson(),
-      'taskMessage': taskMessage.toJson(),
-      'functions': functions.map((function) => function.toJson()).toList(),
-      'preActions': preActions.map((action) => action.toJson()),
-      'postActions': postActions.map((action) => action.toJson()),
-      'respondImmediately': respondImmediately,
-      'context_strategy': context_strategy.name,
-    };
-  }
-
   String toPython() {
     return '''
 def ${latinName}_node() -> NodeConfig:

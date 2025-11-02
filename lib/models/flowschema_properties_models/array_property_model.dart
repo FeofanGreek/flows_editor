@@ -10,6 +10,8 @@ class ArrayPropertyModel {
   int? maxItems;
   @JsonKey(includeFromJson: false, includeToJson: false)
   String key = '';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String typeLabel = 'array';
 
   ArrayPropertyModel({required this.description, required this.items, this.minItems, this.maxItems});
 

@@ -9,7 +9,9 @@ import '../../models/flowschema_properties_models/array_property_model.dart';
 import '../../models/flowschema_properties_models/number_property_model.dart';
 import '../../models/flowschema_properties_models/string_property_model.dart';
 import '../widgets/add_properties_dialog.dart';
+import '../widgets/array_property_widget.dart';
 import '../widgets/circle_button.dart';
+import '../widgets/number_property_widget.dart';
 import '../widgets/string_property_widget.dart';
 import '../widgets/text_field_gpt.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
@@ -71,45 +73,43 @@ async def ЧЕ ТО НАПИСАТЬ(action: dict, flow_manager: FlowManager) ->
       namedSectionParser: const BracketsStartEndNamedSectionParser(),
     );
     super.initState();
-    widget.selectedSchema.handler.properties = {
-      "user_email": {
-        "type": "string",
-        "format": "email",
-        "description": "Почтовый адрес пользователя для отправки чека.",
-      },
-      // "age": {
-      //   "type": "integer",
-      //   "minimum": 18,
-      //   "maximum": 120,
-      //   "description": "Возраст пользователя, должно быть целое число от 18 до 120.",
-      // },
-      // "add_ons": {
-      //   "type": "array",
-      //   "items": {
-      //     "type": "string",
-      //     "enum": ["extra_cheese", "mushrooms", "olives"],
-      //   },
-      //   "description": "Список дополнительных ингредиентов.",
-      // },
-    };
+    //widget.selectedSchema.handler.properties = {
+    //  "user_email": {
+    //    "type": "string",
+    //   "format": "email",
+    //   "description": "Почтовый адрес пользователя для отправки чека.",
+    // },
+    // "age": {
+    //   "type": "integer",
+    //   "minimum": 18,
+    //   "maximum": 120,
+    //   "description": "Возраст пользователя, должно быть целое число от 18 до 120.",
+    // },
+    // "add_ons": {
+    //   "type": "array",
+    //   "items": {
+    //     "type": "string",
+    //     "enum": ["extra_cheese", "mushrooms", "olives"],
+    //   },
+    //   "description": "Список дополнительных ингредиентов.",
+    // },
+    //};
     setProperties();
   }
-
-  List properties = [];
 
   //если параметры уже были установлены, доабвим их в виджет
   void setProperties() {
     for (final key in widget.selectedSchema.handler.properties.keys) {
       switch (widget.selectedSchema.handler.properties[key]['type']) {
         case 'array':
-          properties.add(ArrayPropertyModel);
+        //properties.add(ArrayPropertyModel);
         case 'integer':
-          properties.add(NumberPropertyModel);
+        //properties.add(NumberPropertyModel);
         case 'string':
           {
             final prop = StringPropertyModel.fromJson(widget.selectedSchema.handler.properties[key]);
             prop.key = key;
-            properties.add(prop);
+            //properties.add(prop);
           }
       }
     }
@@ -122,6 +122,7 @@ async def ЧЕ ТО НАПИСАТЬ(action: dict, flow_manager: FlowManager) ->
     final appState = context.watch<AppStateController>();
     final loc = AppLocalizations.of(context)!;
     return Container(
+      key: Key('${controller.flowModel.latinName}flow_schema_setting'),
       constraints: BoxConstraints(minWidth: 400, maxWidth: appState.leftSide),
       child: Padding(
         padding: EdgeInsets.all(8),
@@ -156,9 +157,10 @@ async def ЧЕ ТО НАПИСАТЬ(action: dict, flow_manager: FlowManager) ->
                   CircleButton(
                     onTap: () async {
                       final result = await showAddPropertyDialog(context);
-                      print(result);
-                      widget.selectedSchema.handler.properties[result['key']] = result;
+                      //print(result);
+                      if (result.isNotEmpty) widget.selectedSchema.handler.properties[result['key']] = result;
                       controller.update();
+                      //print(widget.selectedSchema.handler.properties);
                     },
                     icon: CupertinoIcons.add,
                     tooltip: loc.addProperty,
@@ -173,28 +175,43 @@ async def ЧЕ ТО НАПИСАТЬ(action: dict, flow_manager: FlowManager) ->
                 itemBuilder: (context, index) {
                   String key = widget.selectedSchema.handler.properties.entries.toList()[index].key;
                   final prop = widget.selectedSchema.handler.properties;
+                  print(widget.selectedSchema.handler.properties);
                   switch (prop[key]['type']) {
                     case 'array':
-                      return StringPropertyWidget(
-                        setProperty: (StringPropertyModel p) {},
-                        property: StringPropertyModel.fromJson(prop[key]),
-                        removeProperty: (StringPropertyModel p) {},
+                      final prop0 = ArrayPropertyModel.fromJson(prop[key]);
+                      prop0.key = key;
+                      return ArrayPropertyWidget(
+                        setProperty: (ArrayPropertyModel p) {},
+                        property: prop0,
+                        removeProperty: (ArrayPropertyModel p) {
+                          prop.remove(key);
+                          controller.update();
+                        },
                       );
                     case 'integer':
-                      return StringPropertyWidget(
-                        setProperty: (StringPropertyModel p) {},
-                        property: StringPropertyModel.fromJson(prop[key]),
-                        removeProperty: (StringPropertyModel p) {},
+                      final prop0 = NumberPropertyModel.fromJson(prop[key]);
+                      prop0.key = key;
+                      return NumberPropertyWidget(
+                        setProperty: (NumberPropertyModel p) {},
+                        property: prop0,
+                        removeProperty: (NumberPropertyModel p) {
+                          prop.remove(key);
+                          controller.update();
+                        },
                       );
                     case 'string':
-                      final _prop = StringPropertyModel.fromJson(prop[key]);
-                      _prop.key = key;
+                      final prop0 = StringPropertyModel.fromJson(prop[key]);
+                      prop0.key = key;
                       return StringPropertyWidget(
                         setProperty: (StringPropertyModel p) {},
-                        property: _prop,
-                        removeProperty: (StringPropertyModel p) {},
+                        property: prop0,
+                        removeProperty: (StringPropertyModel p) {
+                          prop.remove(key);
+                          controller.update();
+                        },
                       );
                   }
+                  return null;
                 },
               ),
 

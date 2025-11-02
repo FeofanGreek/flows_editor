@@ -40,7 +40,6 @@ class StringPropertyWidgetState extends State<StringPropertyWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            //height: 30,
             child: Row(
               spacing: 5,
               children: [

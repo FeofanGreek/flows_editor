@@ -14,6 +14,8 @@ class NumberPropertyModel {
   num? multipleOf;
   @JsonKey(includeFromJson: false, includeToJson: false)
   String key = '';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String typeLabel = 'integer';
 
   NumberPropertyModel({
     required this.description,

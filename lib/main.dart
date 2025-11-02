@@ -16,15 +16,15 @@ void main() async {
 
   WindowOptions windowOptions = const WindowOptions(
     // Здесь можно настроить другие параметры окна
-    size: Size(800, 600),
+    //size: Size(800, 600),
     center: true,
     skipTaskbar: false,
-    titleBarStyle: TitleBarStyle.normal, // Убедитесь, что заголовок отображается
+    titleBarStyle: TitleBarStyle.normal,
   );
 
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     // Установите желаемый заголовок окна
-    await windowManager.setTitle('Мой новый заголовок окна macOS');
+    await windowManager.setTitle('PipeCat Flows editor');
     await windowManager.show();
     await windowManager.focus();
   });

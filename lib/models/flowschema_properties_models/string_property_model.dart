@@ -13,6 +13,8 @@ class StringPropertyModel {
   String? format;
   @JsonKey(includeFromJson: false, includeToJson: false)
   String key = '';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String typeLabel = 'string';
 
   StringPropertyModel({
     required this.description,

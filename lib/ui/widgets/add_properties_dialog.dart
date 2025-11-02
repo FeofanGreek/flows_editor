@@ -1,3 +1,4 @@
+import 'package:PipeCatFlowEditor/utils/list_extension.dart';
 import 'package:flutter/material.dart';
 import '../../ui/widgets/text_field_gpt.dart';
 
@@ -5,12 +6,13 @@ import '../../l10n/app_localizations.dart';
 import '../../models/flowschema_properties_models/array_property_model.dart';
 import '../../models/flowschema_properties_models/number_property_model.dart';
 import '../../models/flowschema_properties_models/string_property_model.dart';
+import '../../utils/enums_lib.dart';
 import 'drop_down_menu.dart';
 
 Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) async {
   final loc = AppLocalizations.of(context)!;
   Map<String, dynamic> result = {};
-  final one = ArrayPropertyModel(description: '', items: {});
+  final one = ArrayPropertyModel(description: '', items: <String, dynamic>{});
   final two = NumberPropertyModel(description: '', enums: [], default_value: null);
   final three = StringPropertyModel(description: '', enums: [], default_value: null, format: null);
   dynamic property;
@@ -61,7 +63,7 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                   ),
                   if (property != null) ...[
                     TextFieldGpt(
-                      maxLength: 10,
+                      maxLength: 30,
                       value: property.key,
 
                       callBack: (String p1) {
@@ -76,10 +78,11 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                       isNumber: false,
                       onlyLatin: true,
                     ),
-                    if (keyNotFilled)
-                      Text(loc.propertyDescriptionForLLM, style: TextStyle(fontSize: 12, color: Colors.red)),
+                    if (keyNotFilled) Text(loc.fillParameterName, style: TextStyle(fontSize: 12, color: Colors.red)),
+
+                    Text(loc.propertyDescriptionForLLM),
+
                     //Общие для всех параметры
-                    Text(loc.fillParameterName),
                     TextFieldGpt(
                       value: property.description,
                       callBack: (String p1) {
@@ -98,10 +101,7 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                             property.enums = p1.split(',');
                           }
                           if (selectedItem == NumberPropertyModel) {
-                            property.enums = p1
-                                .split(',') // 1. Разделяем строку на список строк ["2", "5", "6", "7"]
-                                .map((e) => num.parse(e)) // 2. Преобразуем каждую строку в num [2, 5, 6, 7]
-                                .toList();
+                            property.enums = p1.split(',').map((e) => num.tryParse(e) ?? 0).toList();
                           }
                           setState(() {});
                         },
@@ -112,49 +112,50 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                       Text(loc.defaultValueIfLLMCannotMakeChoice),
                     ],
 
-                    Wrap(
-                      children: [
-                        ...(property.enums ?? [])
-                            .map(
-                              (el) => SizedBox(
-                                width: (30 + (el.length * 12)).toDouble(),
-                                child: Row(
-                                  spacing: 5,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        property.default_value = el;
-                                        setState(() {});
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.transparent,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(color: Colors.deepPurpleAccent, width: 2),
+                    if (property.runtimeType != ArrayPropertyModel)
+                      Wrap(
+                        children: [
+                          ...(property.enums ?? [])
+                              .map(
+                                (el) => SizedBox(
+                                  width: (30 + (el.toString().length * 12)).toDouble(),
+                                  child: Row(
+                                    spacing: 5,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          property.default_value = el;
+                                          setState(() {});
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.transparent,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(color: Colors.deepPurpleAccent, width: 2),
+                                          ),
+                                          height: 20,
+                                          width: 20,
+                                          padding: EdgeInsets.all(3),
+                                          child: el == property.default_value
+                                              ? Container(
+                                                  height: 15,
+                                                  width: 15,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.deepPurpleAccent,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                )
+                                              : SizedBox.shrink(),
                                         ),
-                                        height: 20,
-                                        width: 20,
-                                        padding: EdgeInsets.all(3),
-                                        child: el == property.default_value
-                                            ? Container(
-                                                height: 15,
-                                                width: 15,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.deepPurpleAccent,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                              )
-                                            : SizedBox.shrink(),
                                       ),
-                                    ),
-                                    Text('$el'),
-                                  ],
+                                      Text('$el'),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            )
-                            .toList(),
-                      ],
-                    ),
+                              )
+                              .toList(),
+                        ],
+                      ),
                     //для типа ArrayPropertyModel
                     if (property.runtimeType == ArrayPropertyModel) ...[
                       Text('Объект JSON Schema, описывающий тип каждого элемента в массиве.'),
@@ -162,7 +163,48 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
     "type": "string",
     "enum": ["extra_cheese", "mushrooms", "olives"]
   },'''),
-
+                      Row(
+                        spacing: 5,
+                        children: [
+                          DropDownMenu<VariableTypes>(
+                            selectedItem:
+                                VariableTypes.values.firstWhereOrNull((e) => e.json == property.items['type']) ??
+                                VariableTypes.string,
+                            items: VariableTypes.values,
+                            onChanged: (value) {
+                              property.items['type'] = value?.json;
+                              setState(() {});
+                            },
+                            getTitle: (type) {
+                              return type.json;
+                            },
+                          ),
+                          Expanded(
+                            child: TextFieldGpt(
+                              value: property.items['enum'] != null ? property.items['enum']!.join(', ') : '',
+                              callBack: (String p1) {
+                                switch (property.items['type']) {
+                                  case 'integer':
+                                    {
+                                      property.enums = p1.split(',').map((e) => num.parse(e)).toList();
+                                    }
+                                  case 'number':
+                                    {
+                                      property.enums = p1.split(',').map((e) => num.parse(e)).toList();
+                                    }
+                                  case 'string':
+                                    {
+                                      property.enums = p1.split(',').map((e) => e).toList();
+                                    }
+                                }
+                              },
+                              hintText: loc.listValues,
+                              isNumber: property.items['type'] == 'string',
+                              onlyLatin: false,
+                            ),
+                          ),
+                        ],
+                      ),
                       Text(loc.minimumAndMaximumNumberElementsInArray),
                       Row(
                         spacing: 5,
@@ -170,9 +212,10 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                           Expanded(
                             child: TextFieldGpt(
                               value: property.minItems.toString(),
+                              maxLength: 10,
                               callBack: (String p1) {
                                 property.minItems = num.tryParse(p1);
-                                setState(() {});
+                                //setState(() {});
                               },
                               hintText: loc.minIntegerValue,
                               isNumber: true,
@@ -182,9 +225,10 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                           Expanded(
                             child: TextFieldGpt(
                               value: property.maxItems.toString(),
+                              maxLength: 10,
                               callBack: (String p1) {
                                 property.maxItems = num.tryParse(p1);
-                                setState(() {});
+                                //setState(() {});
                               },
                               hintText: loc.maxIntegerValue,
                               isNumber: true,
@@ -203,9 +247,11 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                           Expanded(
                             child: TextFieldGpt(
                               value: property.minimun.toString(),
+                              maxLength: 10,
                               callBack: (String p1) {
+                                print(p1);
                                 property.minimun = num.tryParse(p1);
-                                setState(() {});
+                                //setState(() {});
                               },
                               hintText: loc.minIntegerValue,
                               isNumber: true,
@@ -215,9 +261,10 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                           Expanded(
                             child: TextFieldGpt(
                               value: property.maximum.toString(),
+                              maxLength: 10,
                               callBack: (String p1) {
                                 property.maximum = num.tryParse(p1);
-                                setState(() {});
+                                //setState(() {});
                               },
                               hintText: loc.maxIntegerValue,
                               isNumber: true,
@@ -232,9 +279,10 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                           Expanded(
                             child: TextFieldGpt(
                               value: property.exlusiveMinimum.toString(),
+                              maxLength: 10,
                               callBack: (String p1) {
                                 property.exlusiveMinimum = num.tryParse(p1);
-                                setState(() {});
+                                //setState(() {});
                               },
                               hintText: loc.minIntegerValue,
                               isNumber: true,
@@ -244,9 +292,10 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                           Expanded(
                             child: TextFieldGpt(
                               value: property.exlusiveMaximum.toString(),
+                              maxLength: 10,
                               callBack: (String p1) {
                                 property.exlusiveMaximum = num.tryParse(p1);
-                                setState(() {});
+                                //setState(() {});
                               },
                               hintText: loc.maxIntegerValue,
                               isNumber: true,
@@ -258,9 +307,10 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                       Text(loc.valueMustMultipleSpecifiedNumber),
                       TextFieldGpt(
                         value: property.multipleOf.toString(),
+                        maxLength: 10,
                         callBack: (String p1) {
                           property.multipleOf = num.tryParse(p1);
-                          setState(() {});
+                          //setState(() {});
                         },
                         hintText: loc.integerValue,
                         isNumber: true,
@@ -276,9 +326,10 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                           Expanded(
                             child: TextFieldGpt(
                               value: property.minLength.toString(),
+                              maxLength: 10,
                               callBack: (String p1) {
                                 property.minLength = num.tryParse(p1);
-                                setState(() {});
+                                //setState(() {});
                               },
                               hintText: loc.minIntegerValue,
                               isNumber: true,
@@ -288,9 +339,11 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                           Expanded(
                             child: TextFieldGpt(
                               value: property.maxLenght.toString(),
+                              maxLength: 10,
                               callBack: (String p1) {
+                                print(p1);
                                 property.maxLenght = num.tryParse(p1);
-                                setState(() {});
+                                //setState(() {});
                               },
                               hintText: loc.maxIntegerValue,
                               isNumber: true,
@@ -305,6 +358,7 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                         value: property.pattern ?? '',
                         callBack: (String p1) {
                           property.pattern = p1;
+                          setState(() {});
                         },
                         hintText: loc.pattern,
                         isNumber: false,
@@ -315,6 +369,7 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
                         value: property.format ?? '',
                         callBack: (String p1) {
                           property.format = p1;
+                          //setState(() {});
                         },
                         hintText: loc.formatter,
                         isNumber: false,
@@ -340,6 +395,7 @@ Future<Map<String, dynamic>> showAddPropertyDialog<T>(BuildContext context) asyn
               if (property.key != null) {
                 result = property.toJson();
                 result['key'] = property.key;
+                result['type'] = property.typeLabel;
                 Navigator.of(context).pop();
               }
             },

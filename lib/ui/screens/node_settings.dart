@@ -27,8 +27,6 @@ class NodeSettings extends StatefulWidget {
 }
 
 class NodeSettingsState extends State<NodeSettings> {
-  bool extendedSettings = false;
-
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<FLowEditController>();
@@ -36,6 +34,7 @@ class NodeSettingsState extends State<NodeSettings> {
     final loc = AppLocalizations.of(context)!;
 
     return Container(
+      key: Key('${controller.flowModel.latinName}node_setting'),
       constraints: BoxConstraints(minWidth: 400, maxWidth: appState.leftSide),
       alignment: Alignment.topCenter,
       child: Padding(
@@ -50,6 +49,7 @@ class NodeSettingsState extends State<NodeSettings> {
               InkWell(
                 onTap: () {
                   appState.stage = FillStages.projectSettings;
+                  appState.currentNodeBlock = null;
                   appState.currentAction = null;
                   appState.currentSchema = null;
                   controller.update();
@@ -83,19 +83,27 @@ class NodeSettingsState extends State<NodeSettings> {
               SizedBox(height: 5),
               Row(
                 children: [
-                  Text(loc.extendedSettings),
+                  Text('${loc.extendedSettings}: ${appState.extendedMode ? 'on' : 'off'}'),
                   Expanded(child: Divider(height: 1, thickness: 0.3, color: Colors.black, endIndent: 10, indent: 10)),
-                  InkWell(
-                    onTap: () {
+                  // InkWell(
+                  //   onTap: () {
+                  //     setState(() {
+                  //       extendedSettings = !extendedSettings;
+                  //     });
+                  //   },
+                  //   child: Icon(!extendedSettings ? CupertinoIcons.chevron_down : CupertinoIcons.chevron_up),
+                  // ),
+                  Switch(
+                    value: appState.extendedMode,
+                    onChanged: (value) {
                       setState(() {
-                        extendedSettings = !extendedSettings;
+                        appState.extendedMode = value;
                       });
                     },
-                    child: Icon(!extendedSettings ? CupertinoIcons.chevron_down : CupertinoIcons.chevron_up),
                   ),
                 ],
               ),
-              if (extendedSettings) ...[
+              if (appState.extendedMode) ...[
                 CheckBoxWidget(
                   currentValue: widget.node.nodeData.respondImmediately,
                   onChanged: (value) {
@@ -202,7 +210,7 @@ class NodeSettingsState extends State<NodeSettings> {
                   },
                   hintText: loc.targetDescription,
                   isNumber: false,
-                  onlyLatin: true,
+                  onlyLatin: false,
                 ),
                 SizedBox(height: 5),
                 Row(
@@ -289,6 +297,27 @@ class NodeSettingsState extends State<NodeSettings> {
                 ),
                 SizedBox(height: 5),
               ],
+              if (!appState.extendedMode)
+                ...widget.node.nodeData.functions.map(
+                  (fsc) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${loc.schemaDescriptionForLLM}: ${fsc.name}',
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                      ),
+                      TextFieldGpt(
+                        value: fsc.description,
+                        callBack: (String value) {
+                          fsc.description = value;
+                        },
+                        hintText: loc.description,
+                        isNumber: false,
+                        onlyLatin: false,
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),

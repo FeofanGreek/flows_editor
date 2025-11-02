@@ -46,13 +46,14 @@ class TextFieldGptState extends State<TextFieldGpt> {
       textInputAction: TextInputAction.newline,
       style: const TextStyle(fontSize: 12.0, height: 1.2),
       minLines: 1,
-      maxLines: !widget.isNumber && (widget.maxLength ?? 0) > 20 ? null : 1,
+      //maxLines: !widget.isNumber && (widget.maxLength ?? 0) > 20 ? null : 1,
+      maxLines: null,
       maxLength: widget.maxLength,
       textAlignVertical: TextAlignVertical.center,
       textAlign: TextAlign.left,
       inputFormatters: [
-        if (widget.onlyLatin && !widget.isNumber) FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9 ]')),
-        if (widget.isNumber) FilteringTextInputFormatter.allow(RegExp('[0-9].')),
+        if (widget.onlyLatin && !widget.isNumber) FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 _\-,.]')),
+        if (widget.isNumber) FilteringTextInputFormatter.allow(RegExp('[0-9.]')),
       ],
       decoration: InputDecoration(
         isDense: false,

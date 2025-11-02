@@ -38,6 +38,7 @@ class ProjectViewState extends State<ProjectView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
+        key: Key('${controller.flowModel.latinName}project_view'),
         color: Colors.white,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -46,7 +47,10 @@ class ProjectViewState extends State<ProjectView> {
             Positioned(left: appState.leftSide, child: NetworkLineRouter()),
             switch (appState.stage) {
               FillStages.projectSettings => ProjectSettings(),
-              FillStages.nodeSettings => NodeSettings(node: appState.currentNodeBlock!),
+              FillStages.nodeSettings => NodeSettings(
+                key: Key('${appState.currentNodeBlock?.uuid}'),
+                node: appState.currentNodeBlock!,
+              ),
               FillStages.preActionSettings => ActionSettings(
                 isPreAction: true,
                 selectedAction: appState.currentAction!,

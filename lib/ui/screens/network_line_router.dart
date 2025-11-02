@@ -28,8 +28,16 @@ class NetworkLineRouterState extends State<NetworkLineRouter> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.addListener(listener);
       controller.setRegion(context);
+      Future.delayed(
+        Duration(seconds: 1),
+        () => setState(() {
+          showLines = true;
+        }),
+      );
     });
   }
+
+  bool showLines = false;
 
   ///листенер обновления экрана
   void listener() {
@@ -48,7 +56,24 @@ class NetworkLineRouterState extends State<NetworkLineRouter> {
     final controller = context.watch<FLowEditController>();
     final appState = context.read<AppStateController>();
 
+    double getHPixels() {
+      try {
+        return appState.horizontalScrollController.position.pixels;
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    double getVPixels() {
+      try {
+        return appState.verticalScrollController.position.pixels;
+      } catch (e) {
+        return 0;
+      }
+    }
+
     return SizedBox(
+      key: Key(controller.flowModel.latinName),
       width: MediaQuery.of(context).size.width - appState.leftSide,
       height: MediaQuery.of(context).size.height,
       child: Scrollbar(
@@ -86,38 +111,30 @@ class NetworkLineRouterState extends State<NetworkLineRouter> {
                       ),
                     ),
                     // Слой для отрисовки пути
-                    if (appState.horizontalScrollController.hasClients)
+                    if (showLines &&
+                        appState.horizontalScrollController.hasClients &&
+                        appState.verticalScrollController.hasClients)
                       ...controller.edges.map(
                         (node) => IgnorePointer(
                           child: CustomPaint(
                             painter: HyperbolicCurvePainter(
                               start: node.$1 - Offset(appState.leftSide, 0),
                               end: node.$2 - Offset(appState.leftSide, 0),
-                              hScrollPosition: appState.horizontalScrollController.position.pixels,
-                              vScrollPosition: appState.verticalScrollController.position.pixels,
+                              hScrollPosition: getHPixels(),
+                              vScrollPosition: getVPixels(),
                               strokeWidth: 8,
                               color: ColorCycle.getColorByIndex(controller.edges.indexWhere((el) => el == node)),
                             ),
                           ),
                         ),
                       ),
-                    if (appState.horizontalScrollController.hasClients)
+                    if (showLines &&
+                        appState.horizontalScrollController.hasClients &&
+                        appState.verticalScrollController.hasClients)
                       ...controller.edges.map(
                         (node) => EdgeEraser(
-                          start:
-                              node.$1 -
-                              Offset(appState.leftSide, 0) +
-                              Offset(
-                                appState.horizontalScrollController.position.pixels,
-                                appState.verticalScrollController.position.pixels,
-                              ),
-                          end:
-                              node.$2 -
-                              Offset(appState.leftSide, 0) +
-                              Offset(
-                                appState.horizontalScrollController.position.pixels,
-                                appState.verticalScrollController.position.pixels,
-                              ),
+                          start: node.$1 - Offset(appState.leftSide, 0) + Offset(getHPixels(), getVPixels()),
+                          end: node.$2 - Offset(appState.leftSide, 0) + Offset(getHPixels(), getVPixels()),
                           onChanged: () {
                             final filteredNode = controller.nodes.firstWhere((e) => e.uuid == node.$4);
                             final filteredHandler = filteredNode.nodeData.functions.firstWhere(

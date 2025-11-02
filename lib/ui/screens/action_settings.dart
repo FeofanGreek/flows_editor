@@ -53,6 +53,7 @@ async def ${widget.selectedAction.handlerName}(action: dict, flow_manager: FlowM
     final appState = context.watch<AppStateController>();
     final loc = AppLocalizations.of(context)!;
     return Container(
+      key: Key('${controller.flowModel.latinName}action_setting'),
       constraints: BoxConstraints(minWidth: 400, maxWidth: appState.leftSide),
       child: Padding(
         padding: EdgeInsets.all(8),

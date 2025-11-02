@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../utils/enums_lib.dart';
+import '../utils/transliterator.dart';
 import 'block_node.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -9,6 +10,8 @@ part 'flow_model.g.dart';
 @JsonSerializable()
 class FlowModel {
   String projectName;
+  String get latinName => transliterateRussian(projectName);
+
   String projectDescription;
 
   ///массив блоков с нодами
@@ -19,19 +22,11 @@ class FlowModel {
   factory FlowModel.fromJson(Map<String, dynamic> json) => _$FlowModelFromJson(json);
   Map<String, dynamic> toJson() => _$FlowModelToJson(this);
 
-  Map<String, dynamic> toSaveJson() {
-    return {
-      'projectName': projectName,
-      'projectDescription': projectDescription,
-      'nodes': nodes.map((node) => node.nodeData.toSaveJson()).toList(),
-    };
-  }
-
   String toPrompt() {
     return '''
     {
     "your_role": "You're a Python developer. You're an expert in the PipeCat framework and the PipeCat Flows package.",
-    "project_name": $projectName,
+    "project_name": $latinName,
     "project_main_description" : "$projectDescription",
     "project_setting": "This is a telephone conversation. The user's voice will be recognized as text by Whisper model. Qwen3 model, which supports tools, will be used to process FlowsFunctionSchema actions and responses, as well as the Whisper recognition results. The Coqui model will be used to generate speech from Qwen3 responses, so it is necessary to specify the use of stress and punctuation marks in the response. Define this in role_messages using the field coqui_tts_config"
     "project_language" : "Russian",

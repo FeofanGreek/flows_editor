@@ -12,8 +12,8 @@ import '../models/flow_model.dart';
 
 class AppStateController with ChangeNotifier {
   final GlobalKey interactiveViewerKey = GlobalKey();
-  final verticalScrollController = ScrollController();
-  final horizontalScrollController = ScrollController();
+  ScrollController verticalScrollController = ScrollController();
+  ScrollController horizontalScrollController = ScrollController();
   FillStages stage = FillStages.projectSettings;
 
   FunctionSchema? currentSchema;
@@ -44,15 +44,15 @@ class AppStateController with ChangeNotifier {
     String? jsonString;
 
     if (fileBytes != null) {
-      print('Файл прочитан через байты (в памяти).');
+      //print('Файл прочитан через байты (в памяти).');
       jsonString = utf8.decode(fileBytes);
     } else if (!kIsWeb && file.path != null) {
       try {
         final File loadedFile = File(file.path!);
         jsonString = await loadedFile.readAsString(encoding: utf8); // Чтение по пути с UTF-8
-        print('Файл прочитан через путь (dart:io).');
+        //print('Файл прочитан через путь (dart:io).');
       } catch (e) {
-        print('Ошибка при чтении файла по пути: $e');
+        //print('Ошибка при чтении файла по пути: $e');
         if (context.mounted) {
           ScaffoldMessenger.of(
             context,
@@ -82,34 +82,42 @@ class AppStateController with ChangeNotifier {
           ),
         );
       }
-      print('Загруженный проект: ${loadedProject.projectName}');
+      //print('Загруженный проект: ${loadedProject.projectName}');
+      verticalScrollController = ScrollController();
+      horizontalScrollController = ScrollController();
       return loadedProject;
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ошибка при декодировании JSON: $e')));
       }
-      print('Ошибка при декодировании JSON: $e');
+      //print('Ошибка при декодировании JSON: $e');
       return null;
     }
   }
 
   Future<bool> saveProject(FlowModel model) async {
     final toSave = model.toJson();
-    debugPrint('$toSave');
-    //Uint8List? bytes = Uint8List.fromList(jsonEncode(toSave).codeUnits);
     final Uint8List bytes = utf8.encode(jsonEncode(toSave));
 
-    String? outputFile = await FilePicker.platform.saveFile(
+    await FilePicker.platform.saveFile(
       dialogTitle: 'Please select an output file:',
-      fileName: '${model.projectName}.json',
+      fileName: '${model.latinName.replaceAll(' ', '_')}.json',
       type: FileType.custom,
       bytes: bytes as Uint8List?,
     );
+    return true;
+  }
 
-    //if (outputFile == null) {
-    // User canceled the picker
-    //}
-    //unawaited(savePythonFlow('${model.projectName}.json', jsonEncode(toSave)));
+  Future<bool> savePrompt(String prompt, String projectName) async {
+    //debugPrint(prompt);
+    final Uint8List bytes = utf8.encode(prompt);
+
+    await FilePicker.platform.saveFile(
+      dialogTitle: 'Please select an output file:',
+      fileName: '${projectName.replaceAll(' ', '_')}.prompt',
+      type: FileType.custom,
+      bytes: bytes as Uint8List?,
+    );
     return true;
   }
 }

@@ -24,7 +24,7 @@ class DropDownMenuState<T> extends State<DropDownMenu<T>> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Container(
-      width: 400,
+      //width: 400,
       //height: 37,
       padding: const EdgeInsets.symmetric(horizontal: 6.0),
       decoration: BoxDecoration(
@@ -39,7 +39,7 @@ class DropDownMenuState<T> extends State<DropDownMenu<T>> {
             return DropdownMenuItem<T>(
               value: mode,
               child: SizedBox(
-                width: 300,
+                //width: 300,
                 child: Text(
                   widget.getTitle(mode),
                   overflow: TextOverflow.ellipsis,
@@ -52,7 +52,7 @@ class DropDownMenuState<T> extends State<DropDownMenu<T>> {
             return DropdownMenuItem<T>(
               value: mode,
               child: SizedBox(
-                width: 300,
+                //width: 300,
                 child: Text(widget.getTitle(mode), overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12)),
               ),
             );

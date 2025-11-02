@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import '../../controllers/app_state_controller.dart';
 import '../../controllers/flow_edit_controller.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/flow_model.dart';
 import '../widgets/circle_button.dart';
 import '../widgets/list_nodes_plate.dart';
 import '../widgets/text_field_gpt.dart';
@@ -23,6 +24,7 @@ class ProjectSettingsState extends State<ProjectSettings> {
     final loc = AppLocalizations.of(context)!;
 
     return Container(
+      key: Key('${controller.flowModel.latinName}project_setting'),
       constraints: BoxConstraints(minWidth: 400, maxWidth: appState.leftSide),
       child: Padding(
         padding: EdgeInsets.all(8),
@@ -36,9 +38,20 @@ class ProjectSettingsState extends State<ProjectSettings> {
               children: [
                 CircleButton(
                   onTap: () async {
+                    controller.flowModel = FlowModel(projectName: 'new_project', projectDescription: '');
+                    controller.update();
+                  },
+                  icon: CupertinoIcons.doc,
+                  tooltip: 'Новый проект',
+                ),
+                CircleButton(
+                  onTap: () async {
+                    //appState.verticalScrollController.dispose();
+                    //appState.horizontalScrollController.dispose();
                     final pr = await appState.loadProject(context);
                     if (pr != null) {
                       controller.flowModel = pr;
+                      controller.setRegion(context);
                       controller.update();
                     }
                   },
@@ -53,13 +66,14 @@ class ProjectSettingsState extends State<ProjectSettings> {
                   tooltip: loc.saveProject,
                 ),
                 CircleButton(onTap: () {}, icon: Icons.import_contacts, tooltip: loc.exportToPython),
-                CircleButton(onTap: () {}, icon: Icons.explicit, tooltip: loc.importFromPython),
+                //CircleButton(onTap: () {}, icon: Icons.explicit, tooltip: loc.importFromPython),
                 CircleButton(
                   onTap: () {
-                    print(controller.flowModel.toPrompt());
+                    final prompt = controller.flowModel.toPrompt();
+                    appState.savePrompt(prompt, controller.flowModel.latinName);
                   },
                   icon: Icons.schema_outlined,
-                  tooltip: 'Построить с АИ',
+                  tooltip: 'Create prompt for Claude',
                 ),
               ],
             ),
@@ -106,8 +120,6 @@ class ProjectSettingsState extends State<ProjectSettings> {
             Expanded(
               child: ReorderableListView(
                 shrinkWrap: true,
-                //itemCount: controller.flowModel.nodes.length,
-                //itemBuilder: (contxt, index) => ListNodesPlate(node: controller.flowModel.nodes[index], index: index),
                 onReorder: (int oldIndex, int newIndex) {
                   setState(() {
                     if (oldIndex < newIndex) {

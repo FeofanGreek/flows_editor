@@ -2,6 +2,7 @@ import '../../utils/string_extention.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/enums_lib.dart';
+import '../utils/transliterator.dart';
 import 'addon_properties_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -11,8 +12,10 @@ part 'handler_model.g.dart';
 @JsonSerializable()
 class HandlerModel {
   String get name {
-    return '${flowResultName}_handler';
+    return '${latinName}_handler';
   }
+
+  String get latinName => transliterateRussian(flowResultName);
 
   String flowResultName;
 
@@ -47,15 +50,6 @@ class HandlerModel {
 
   factory HandlerModel.fromJson(Map<String, dynamic> json) => _$HandlerModelFromJson(json);
   Map<String, dynamic> toJson() => _$HandlerModelToJson(this);
-
-  Map<String, dynamic> toSaveJson() {
-    return {
-      'flowResultName': flowResultName,
-      'properties': properties,
-      'addonProperties': addonProperties.map((add) => add).toList(),
-      'outNode': nextNodeUuid,
-    };
-  }
 
   String returnClassBody() {
     return properties.entries

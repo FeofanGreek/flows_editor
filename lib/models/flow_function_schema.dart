@@ -10,7 +10,7 @@ class FunctionSchema {
   String uuid;
 
   ///имя функции с которой будет оперировать LLM для простоты лучше делать равной handlerName и в формате snake_case
-  String get name => '${handler.name}_schema';
+  String get name => '${handler.latinName}_schema';
 
   ///хэндлер этой схемы
   HandlerModel handler;
@@ -23,15 +23,11 @@ class FunctionSchema {
   factory FunctionSchema.fromJson(Map<String, dynamic> json) => _$FunctionSchemaFromJson(json);
   Map<String, dynamic> toJson() => _$FunctionSchemaToJson(this);
 
-  Map<String, dynamic> toSaveJson() {
-    return {'handler': handler.toSaveJson(), 'description': description};
-  }
-
   String toPython() {
     return '''
     $name = FlowsFunctionSchema(
-      name="${handler.name}",
-      handler=${handler.name},
+      name="${handler.latinName}",
+      handler=${handler.latinName},
       description="$description",
       properties=${jsonEncode(handler.properties)},
       required=${jsonEncode(handler.properties.keys.toList())},
